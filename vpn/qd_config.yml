@@ -1,0 +1,9 @@
+brew: openconnect
+scoop: openconnect
+posix:
+  path:
+    - "%home%"
+    - vpn
+encrypt:
+  - "*.p12"
+  - config.yml

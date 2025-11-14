@@ -1,0 +1,11 @@
+brew:
+  - fzf
+  - ripgrep
+  - fd
+  - neovim
+scoop:
+  - neovim
+posix:
+  path:
+    - "%config%"
+    - neovim

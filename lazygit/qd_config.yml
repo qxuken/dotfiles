@@ -1,0 +1,14 @@
+brew: lazygit
+scoop:
+  name: lazygit
+  bucket: extras
+posix:
+  path:
+    - "%config%"
+    - lazygit
+darwin:
+  path:
+    - "%application_support%"
+    - lazygit
+ignore:
+  - state.yml

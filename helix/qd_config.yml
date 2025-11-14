@@ -1,0 +1,6 @@
+brew: helix
+scoop: helix
+posix:
+  path:
+    - "%config%"
+    - helix
