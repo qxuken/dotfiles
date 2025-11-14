@@ -1,0 +1,16 @@
+theme = "base16_transparent"
+
+[editor]
+true-color = true
+line-number = "relative"
+
+[editor.statusline.mode]
+normal = "nor"
+insert = "ins"
+select = "sel"
+
+[editor.lsp]
+display-inlay-hints = false
+
+[editor.file-picker]
+hidden = false

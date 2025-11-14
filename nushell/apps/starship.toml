@@ -1,0 +1,7 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+[fossil_branch]
+disabled = false
+
+[fossil_metrics]
+disabled = false

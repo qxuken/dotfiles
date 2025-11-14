@@ -1,0 +1,15 @@
+brew: nushell
+scoop: nu
+posix:
+  path:
+    - "%config%"
+    - nushell
+darwin:
+  path:
+    - "%application_support%"
+    - nushell
+
+ignore:
+  - history.txt
+  - plugin.msgpackz
+  - vendor

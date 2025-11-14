@@ -1,0 +1,6 @@
+brew: yazi
+scoop: yazi
+posix:
+  path:
+    - "%config%"
+    - yazi

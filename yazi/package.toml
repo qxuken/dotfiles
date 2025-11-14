@@ -1,0 +1,39 @@
+[[plugin.deps]]
+use = "yazi-rs/plugins:full-border"
+rev = "c0ad8a3"
+hash = "3996fc74044bc44144b323686f887e1"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:smart-enter"
+rev = "c0ad8a3"
+hash = "a7ab702e1ef0c097defbc976ed34c186"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:mount"
+rev = "c0ad8a3"
+hash = "c0b6cd7dc830b96e77e5c8a71eec7926"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:chmod"
+rev = "c0ad8a3"
+hash = "d0ad0c1946b46a30c8489735fe8de41c"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:smart-filter"
+rev = "c0ad8a3"
+hash = "4d82cd9e7534d976f000edf9c0f68d8f"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:git"
+rev = "c0ad8a3"
+hash = "bf6f074cd41ee33c3360341d168f9733"
+
+[[flavor.deps]]
+use = "yazi-rs/flavors:catppuccin-mocha"
+rev = "d04a298"
+hash = "288a0dedd5d13b28605cf82c05326dcd"
+
+[[flavor.deps]]
+use = "yazi-rs/flavors:catppuccin-latte"
+rev = "d04a298"
+hash = "a4d508772dc7b20d739a2f9a1d2d396f"

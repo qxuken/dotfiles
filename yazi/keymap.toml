@@ -1,0 +1,27 @@
+"$schema" = "https://yazi-rs.github.io/schemas/keymap.json"
+
+[mgr]
+prepend_keymap = [
+  { on = "Z", run = "plugin fzf", desc = "Jump to a file/directory via fzf" },
+  { on = "z", run = "plugin zoxide", desc = "Jump to a directory via zoxide" },
+  { on = "l", run = "plugin smart-enter", desc = "Enter the child directory, or open the file" },
+]
+
+[[mgr.append_keymap]]
+on = ["g", "p"]
+run = 'cd ~/projects'
+desc = 'Go ~/projects'
+
+[[mgr.append_keymap]]
+on = ["c", "m"]
+run = "plugin chmod"
+desc = "Chmod on selected files"
+
+[[mgr.append_keymap]]
+on = "M"
+run = "plugin mount"
+
+[[mgr.append_keymap]]
+on = "F"
+run = "plugin smart-filter"
+desc = "Smart filter"

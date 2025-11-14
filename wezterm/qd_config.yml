@@ -1,0 +1,8 @@
+brew: wezterm
+scoop: wezterm
+posix:
+  path:
+    - "%config%"
+    - wezterm
+encrypt:
+  - fonts/BerkleyMono/*.ttf
