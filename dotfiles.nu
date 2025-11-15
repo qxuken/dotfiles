@@ -10,7 +10,7 @@ const host_aliases = {
 const known_hosts = [posix darwin win windows]
 def sys-host-name [] { sys host | get name }
 
-def home-path [] { $env | get -o HOME | default ($env | get -o HOMEPATH | path expand)  }
+def home-path [] { $env | get -o HOME | default { $env | get -o HOMEPATH | path expand }  }
 def config-path [] { home-path | path join .config }
 def application-support [] { home-path | path join Library 'Application Support' }
 def appdata [] { $env.APPDATA }
@@ -34,11 +34,11 @@ def load-config [host: string, path: path] {
   open $path
   # Merge order is important
   | merge deep ($in
-                | get -o --ignore-case ($host_aliases | get -o --ignore-case $host)
+                | get -o --ignore-case ($host_aliases | get -o --ignore-case $host | default 'unknown')
                 | default {})
   | merge deep ($in | get -o --ignore-case $host | default {})
   | reject -o --ignore-case ...$known_hosts
-  | upsert path {|row| if ($row.path | is-not-empty) { $row.path | path-interpreter } }
+  | upsert path {|row| if ($row | get -o path | is-not-empty) { $row.path | path-interpreter } }
 }
 def get-configs [src: path] {
   $src | path expand | path join * qd_config.yml | str replace --all "\\" "/" | glob $in
