@@ -1,7 +1,8 @@
-brew: lazygit
+brew:
+  - lazygit
 scoop:
-  name: lazygit
-  bucket: extras
+  - name: lazygit
+    bucket: extras
 posix:
   path:
     - "%config%"
@@ -9,6 +10,10 @@ posix:
 darwin:
   path:
     - "%application_support%"
+    - lazygit
+win:
+  path:
+    - "%appdata%"
     - lazygit
 ignore:
   - state.yml

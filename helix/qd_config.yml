@@ -1,6 +1,12 @@
-brew: helix
-scoop: helix
+brew:
+  - helix
+scoop:
+  - helix
 posix:
   path:
     - "%config%"
+    - helix
+win:
+  path:
+    - "%appdata%"
     - helix
