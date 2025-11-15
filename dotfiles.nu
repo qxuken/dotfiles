@@ -5,9 +5,10 @@ export def master-key [] { $dotfiles_src | path join master.key }
 
 const host_aliases = {
   Darwin: posix
+  Ubuntu: posix
   Windows: win
 }
-const known_hosts = [posix darwin win windows]
+const known_hosts = [posix darwin ubuntu win windows]
 def sys-host-name [] { sys host | get name }
 
 def home-path [] { $env | get -o HOME | default { $env | get -o HOMEPATH | path expand }  }
