@@ -1,6 +1,13 @@
-brew: yazi
-scoop: yazi
+brew:
+ - yazi
+scoop:
+ - yazi
 posix:
   path:
     - "%config%"
     - yazi
+win:
+  path:
+    - "%appdata%"
+    - yazi
+    - config
