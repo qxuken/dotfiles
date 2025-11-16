@@ -12,7 +12,7 @@ const host_aliases = {darwin: posix, ubuntu: posix, windows: win}
 def sys-host-name []: nothing -> string { sys host | get name }
 
 def home-path [] { $env | get -o HOME | default { $env | get -o HOMEPATH | path expand } }
-def make-path []: list<string> -> path {
+def interpolate-path []: list<string> -> path {
   each {|it|
     match $it {
       "%dotfiles%"            => (pwd)
@@ -43,8 +43,8 @@ def load-config []: path -> record {
   | merge ($in | get -o --ignore-case $host | default {})
   | merge deep --strategy append (global-config)
   | reject -o --ignore-case ...$known_hosts
-  | upsert path { default [] | make-path }
-  | upsert include { default [] | each { make-path } }
+  | upsert path { default [] | interpolate-path }
+  | upsert include { default [] | each { interpolate-path } }
   { ...$config, name: ($parent | path basename), src: $parent }
 }
 def load-configs []: nothing -> list<record> { get-configs | each {load-config} }
@@ -56,42 +56,55 @@ def config-file-path [name: string@config-names]: nothing -> path { $dotfiles_pa
 def format-file-list [--strip-path: path]: list<path> -> list<path> {
   each {path relative-to $strip_path} | where ($it | path type) == file
 }
-def local-files [--ignore: list<glob> = [], --encryption-globs: list<glob>]: record -> record<normal: list<path>, to_encrypt: list<path>> {
-  let local_path = $in.path
-  if ($local_path | is-empty) {
+def files-list [--ignore: list<glob> = [], --encryption-globs: list<glob>]: path -> list<record> {
+  let input = $in
+  if ($input | is-empty) {
     error make {msg: "No path provided", help: "Config is missing path", label: {
       text: "Path is empty",
-      span: (metadata $local_path).span
+      span: (metadata $input).span
     }}
   }
-  cd $local_path
-  {
-    normal: (glob --exclude ($ignore | append $encryption_globs) */**
-            | format-file-list --strip-path $local_path),
-    to_encrypt: ($encryption_globs
-                | each {|it| glob --exclude $ignore $it}
-                | flatten
-                | format-file-list --strip-path $local_path)
-  }
-}
-def stored-files []: record -> record<normal: list<path>, to_decrypt: list<path>> {
-  let stored_path = $in.src
-  cd $stored_path
-  {
-    normal: (glob --exclude ["**/*.age" "**/qd_config.yml"] */** | format-file-list --strip-path $stored_path),
-    to_decrypt: (glob **/*.age | format-file-list --strip-path $stored_path)
-  }
+  cd $input
+  glob --exclude (["**/*.age" "**/qd_config.yml"] | append $ignore | append $encryption_globs) */**
+  | format-file-list --strip-path $input
+  | wrap path
+  | insert encrypted false
+  | append ($encryption_globs
+            | append **/*.age
+            | each --flatten {|it| glob --exclude $ignore $it}
+            | format-file-list --strip-path $input
+            | str replace -r ".age$" ""
+            | wrap path
+            | insert encrypted true)
 }
 # Pull local config files into dotfiles
 export def pull [config_name: string@syncable-configs] {
   let config = config-file-path $config_name | load-config
-  let files = $config | local-files --ignore $config.ignore? --encryption-globs $config.encrypt
-  {...$config, files: $files}
+  $config.path
+  | files-list --ignore ($config.ignore?) --encryption-globs ($config.encrypt)
+  | each {|it|
+    let from = ($config.path | path join $it.path)
+    let to = ($config.src | path join $it.path)
+    if $it.encrypted {
+      age --encrypt -R (master-rec-path) -o $"($to).age" $from
+    } else {
+      cp --force --preserve [mode, ownership, timestamps, xattr] $from $to
+    }
+  }
 }
 # Push stored config files into local
 export def push [config_name: string@syncable-configs] {
   let config = config-file-path $config_name | load-config
-  let files = $config | stored-files
-  {...$config, files: $files}
+  $config.src
+  | files-list
+  | each {|it|
+    let from = ($config.src | path join $it.path)
+    let to = ($config.path | path join $it.path)
+    if $it.encrypted {
+      age --decrypt -i (master-key-path) -o $to $"($from).age"
+    } else {
+      cp --force --preserve [mode, ownership, timestamps, xattr] $from $to
+    }
+  }
 }
 
