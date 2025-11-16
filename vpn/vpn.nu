@@ -8,7 +8,7 @@ def locations []: nothing -> string {
 export def conf [loc: string@locations] {
   open ($src | path join $servers_file)
   | get $loc
-  | update cert {path expand}
+  | update cert {|it| $src | path join $it.cert}
 }
 
 export def connect [loc: string@locations] {
