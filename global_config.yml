@@ -4,7 +4,7 @@ ignore:
   - "**/.editorconfig"
 include:
   - ["%dotfiles%", .editorconfig]
-local_loader:
+dotfile_include:
   - ["%dotfiles%", dotfiles.nu]
 encrypt:
   - "**/*.p12"

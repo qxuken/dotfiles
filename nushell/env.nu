@@ -36,10 +36,10 @@ if $env.HOST_OS_NAME != "Windows" {
         "/opt/homebrew/opt/ruby/bin"
         "/home/linuxbrew/.linuxbrew/bin"
         "/home/linuxbrew/.linuxbrew/opt/ruby/bin"
-        ($env.HOME | path join .local/bin)
-        ($env.HOME | path join go/bin)
-        ($env.HOME | path join .cargo/bin)
         ($env.HOME | path join bin)
+        ($env.HOME | path join .local/bin)
+        ($env.HOME | path join .cargo/bin)
+        ($env.HOME | path join go/bin)
     ] | where (path exists)
     $env.PATH = ($env.PATH | split row (char esep) | prepend $bins)
 
@@ -48,7 +48,7 @@ if $env.HOST_OS_NAME != "Windows" {
         path add ($env.HOME | path join .bun/bin)
     }
 
-    if (which brew | is-not-empty ) {
+    if (which brew | is-not-empty) {
         $env.LIBRARY_PATH = $env
         | get LIBRARY_PATH -o
         | default ''
