@@ -3,9 +3,16 @@ const config_file_name   = "qd_config.yml"
 const global_config_path = $dotfiles_path | path join "global_config.yml"
 
 export def pwd       []: nothing -> path { $dotfiles_path } # Dotfiles location
-def tmp-cache        []: nothing -> path { $dotfiles_path | path join .tmp }
 def master-rec-path  []: nothing -> path { $dotfiles_path | path join master.rec }
 def master-key-path  []: nothing -> path { $dotfiles_path | path join master.key }
+def tmp        []: nothing -> path { $dotfiles_path | path join .tmp }
+def tmp-file   []: nothing -> path {
+  let dir = tmp
+  mkdir $dir
+  let file = $dir | path join (random uuid -v 7)
+  touch $file
+  $file
+}
 
 const known_hosts  = [posix darwin ubuntu win windows]
 const host_aliases = {darwin: posix, ubuntu: posix, windows: win}
@@ -27,7 +34,10 @@ def interpolate-path []: list<string> -> path {
   | path join
 }
 
-def interpolate-string-list-field [config: record, field: string]: list<string> -> list<string> {
+def interpolate-string-list-field [config: record, field: string]: [
+  list<string> -> list<string>
+  list<any> -> list<any>
+] {
   each --flatten {|it|
     match $it {
       "%root%" => ($config | get $field)
@@ -102,7 +112,7 @@ export def pull [config_name: string@syncable-configs] {
       age --encrypt -R (master-rec-path) -o $"($to).age" $from
     } else {
       mkdir ($to | path parse | get parent)
-      cp --force --preserve [mode, timestamps, xattr] $from $to
+      cp --update $from $to
     }
   }
   ignore
@@ -113,15 +123,19 @@ export def push [config_name: string@syncable-configs] {
   $config.src | files-list | each {|it|
     let from = ($config.src | path join $it.path)
     let to = ($config.path | path join $it.path)
+    mkdir ($to | path parse | get parent)
     if $it.encrypted {
-      age --decrypt -i (master-key-path) -o $to $"($from).age"
+      let out = tmp-file
+      age --decrypt -i (master-key-path) -o $out $"($from).age"
+      cp --force $out $to
+      rm $out
     } else {
-      mkdir ($to | path parse | get parent)
-      cp --force --preserve [mode, timestamps, xattr] $from $to
+      cp --update $from $to
     }
   }
   $config.include | each {|from|
-    cp --force --preserve [mode, timestamps, xattr] $from ($config.path | path join ($from | path basename))
+    let to = $config.path | path join ($from | path basename)
+    cp --update $from $to
   }
   ignore
 }
