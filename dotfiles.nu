@@ -95,12 +95,9 @@ export def remote-diff [] {
 
 # Compile dotfile
 export def compile-dotfile [] {
-  load-configs
-  | get local_loader
-  | flatten
-  | each {interpolate-path}
-  | uniq
-  | each {|it| $"use ($it)"}
+  let config = load-configs
+  $config | each --flatten {get -o dotfile_include | default []} | each {interpolate-path} | uniq | each {|it| $"use ($it)"}
+  | append ($config | each --flatten {get -o dotfile_source | default []} | each {interpolate-path} | uniq | each {|it| $"source ($it)"})
   | str join (char newline)
   | save -f (home-path | path join .dotfiles.local.nu)
 }

@@ -8,5 +8,5 @@ path:
 encrypt:
   - "**/*.p12"
   - "**/config.yml"
-local_loader:
+dotfile_include:
   - ["%home%", vpn, vpn.nu]
