@@ -2,12 +2,14 @@ brew:
   - git
   - fzf
   - ripgrep
+  - rg
   - fd
   - neovim
 scoop:
   - git
   - fzf
   - ripgrep
+  - rg
   - fd
   - neovim
 posix:
