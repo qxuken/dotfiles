@@ -1,39 +1,39 @@
 [[plugin.deps]]
 use = "yazi-rs/plugins:full-border"
-rev = "c0ad8a3"
+rev = "9a52857"
 hash = "3996fc74044bc44144b323686f887e1"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:smart-enter"
-rev = "c0ad8a3"
-hash = "a7ab702e1ef0c097defbc976ed34c186"
+rev = "9a52857"
+hash = "56fdabc96fc1f4d53c96eb884b02a5be"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:mount"
-rev = "c0ad8a3"
-hash = "c0b6cd7dc830b96e77e5c8a71eec7926"
+rev = "9a52857"
+hash = "4fccaaf10c36dc2466e2438a386ff017"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:chmod"
-rev = "c0ad8a3"
-hash = "d0ad0c1946b46a30c8489735fe8de41c"
+rev = "9a52857"
+hash = "8ad3e90b079190b4905f24a44f4ca06b"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:smart-filter"
-rev = "c0ad8a3"
-hash = "4d82cd9e7534d976f000edf9c0f68d8f"
+rev = "9a52857"
+hash = "bcda8eeb3f4013bae156aecabfc745e8"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:git"
-rev = "c0ad8a3"
-hash = "bf6f074cd41ee33c3360341d168f9733"
+rev = "9a52857"
+hash = "63b6c222bf2103b3023389dde5e2ecfe"
 
 [[flavor.deps]]
 use = "yazi-rs/flavors:catppuccin-mocha"
-rev = "d04a298"
-hash = "288a0dedd5d13b28605cf82c05326dcd"
+rev = "2d73b79"
+hash = "d4c41d713b325710a9dd5ae86c3f8a5f"
 
 [[flavor.deps]]
 use = "yazi-rs/flavors:catppuccin-latte"
-rev = "d04a298"
-hash = "a4d508772dc7b20d739a2f9a1d2d396f"
+rev = "2d73b79"
+hash = "9e789c612c34f941a2afd42e7ded39f"

@@ -182,4 +182,5 @@ source ~/.local.nu
 
 # use ./apps/conda.nu
 use ./apps/uv.nu *
+use ./scripts/npm.nu
 
