@@ -6,4 +6,4 @@ path:
   - "%config%"
   - wezterm
 encrypt:
-  - fonts/BerkleyMono/*.ttf
+  - "**/fonts/BerkleyMono/*.ttf"

@@ -13,8 +13,8 @@ scoop:
 posix:
   path:
     - "%config%"
-    - neovim
+    - nvim
 win:
   path:
     - "%local-appdata%"
-    - neovim
+    - nvim
