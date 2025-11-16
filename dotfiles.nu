@@ -18,7 +18,7 @@ const known_hosts  = [posix darwin ubuntu win windows]
 const host_aliases = {darwin: posix, ubuntu: posix, windows: win}
 def sys-host-name []: nothing -> string { sys host | get name }
 
-def home-path [] { $env | get -o HOME | default { $env | get -o HOMEPATH | path expand } }
+def home-path [] { "~" | path expand }
 def interpolate-path []: list<string> -> path {
   each {|it|
     match $it {
@@ -93,6 +93,18 @@ export def remote-diff [] {
   fossil diff
 }
 
+# Compile dotfile
+export def compile-dotfile [] {
+  load-configs
+  | get local_loader
+  | flatten
+  | each {interpolate-path}
+  | uniq
+  | each {|it| $"use ($it)"}
+  | str join (char newline)
+  | save -f (home-path | path join .dotfiles.local.nu)
+}
+
 def format-file-list [--strip-path: path]: list<path> -> list<path> {
   each {path relative-to $strip_path} | where ($it | path type) == file
 }
@@ -118,7 +130,11 @@ def files-list [--ignore: list<glob> = [], --encryption-globs: list<glob>]: path
             | insert encrypted true)
 }
 # Pull local config files into dotfiles
-export def pull [config_name: string@syncable-configs] {
+export def pull [
+  config_name: string@syncable-configs
+  --sync-with-remote (-s): string # Push updates to remote after pulling from local
+  --no-recomplie
+] {
   let config = config-file-path $config_name | load-config
   $config.path
   | files-list --ignore ($config.ignore?) --encryption-globs ($config.encrypt)
@@ -132,17 +148,32 @@ export def pull [config_name: string@syncable-configs] {
       cp --update $from $to
     }
   }
-  ignore
+  if ($sync_with_remote | is-not-empty) {
+    remote-push $sync_with_remote
+  }
+  if not $no_recomplie {
+    compile-dotfile
+  }
 }
 # Pull all local configs into dotfiles
-export def pull-all [--sync-with-remote (-s)] {
+export def pull-all [
+  --sync-with-remote (-s): string # Push updates to remote after pulling from local
+] {
+  syncable-configs | each {|c| pull --no-recomplie $c}
+  if ($sync_with_remote | is-not-empty) {
+    remote-push $sync_with_remote
+  }
+  compile-dotfile
+}
+# Push stored config files into local
+export def push [
+  config_name: string@syncable-configs
+  --sync-with-remote (-s) # Pull remote updates before pushing to local
+  --no-recomplie
+] {
   if $sync_with_remote {
     remote-pull
   }
-  syncable-configs | each {|c| pull $c}
-}
-# Push stored config files into local
-export def push [config_name: string@syncable-configs] {
   let config = config-file-path $config_name | load-config
   $config.src | files-list | each {|it|
     let from = ($config.src | path join $it.path)
@@ -161,13 +192,19 @@ export def push [config_name: string@syncable-configs] {
     let to = $config.path | path join ($from | path basename)
     cp --update $from $to
   }
+  if not $no_recomplie {
+    compile-dotfile
+  }
   ignore
 }
 # Push all stored configs into local
-export def push-all [--sync-with-remote (-s): string] {
-  if ($sync_with_remote | is-not-empty) {
-    remote-push $sync_with_remote
+export def push-all [
+  --sync-with-remote (-s) # Pull remote updates before pushing to local
+] {
+  if $sync_with_remote {
+    remote-pull
   }
-  syncable-configs | each {|c| push $c}
+  syncable-configs | each {|c| push --no-recomplie $c}
+  compile-dotfile
 }
 
