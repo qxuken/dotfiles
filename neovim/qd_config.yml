@@ -14,6 +14,11 @@ posix:
   path:
     - "%config%"
     - nvim
+ubuntu:
+  brew:
+    - "%root%"
+    - xclip
+    - xsel
 win:
   path:
     - "%local-appdata%"

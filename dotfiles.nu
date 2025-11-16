@@ -27,6 +27,15 @@ def interpolate-path []: list<string> -> path {
   | path join
 }
 
+def interpolate-string-list-field [config: record, field: string]: list<string> -> list<string> {
+  each --flatten {|it|
+    match $it {
+      "%root%" => ($config | get $field)
+      _        => $it
+    }
+  }
+}
+
 def global-config [src: path = $global_config_path] { open $src }
 def get-configs [src: path = $dotfiles_path]: nothing -> list<path> {
   cd $src
@@ -35,7 +44,8 @@ def get-configs [src: path = $dotfiles_path]: nothing -> list<path> {
 def load-config []: path -> record {
   let host = sys-host-name
   let parent = $in | path parse | get parent
-  let config = open $in
+  let raw_config = open $in
+  $raw_config
   # Merge order is important
   | merge ($in
           | get -o --ignore-case ($host_aliases | get -o --ignore-case $host | default 'unknown')
@@ -43,9 +53,12 @@ def load-config []: path -> record {
   | merge ($in | get -o --ignore-case $host | default {})
   | merge deep --strategy append (global-config)
   | reject -o --ignore-case ...$known_hosts
+  | upsert brew { default [] | interpolate-string-list-field $raw_config brew }
+  | upsert scoop { default [] | interpolate-string-list-field $raw_config scoop }
   | upsert path { default [] | interpolate-path }
   | upsert include { default [] | each { interpolate-path } }
-  { ...$config, name: ($parent | path basename), src: $parent }
+  | insert name ($parent | path basename)
+  | insert src $parent
 }
 def load-configs []: nothing -> list<record> { get-configs | each {load-config} }
 
@@ -92,14 +105,12 @@ export def pull [config_name: string@syncable-configs] {
       cp --force --preserve [mode, timestamps, xattr] $from $to
     }
   }
-  | ignore
+  ignore
 }
 # Push stored config files into local
 export def push [config_name: string@syncable-configs] {
   let config = config-file-path $config_name | load-config
-  $config.src
-  | files-list
-  | each {|it|
+  $config.src | files-list | each {|it|
     let from = ($config.src | path join $it.path)
     let to = ($config.path | path join $it.path)
     if $it.encrypted {
@@ -109,6 +120,9 @@ export def push [config_name: string@syncable-configs] {
       cp --force --preserve [mode, timestamps, xattr] $from $to
     }
   }
-  | ignore
+  $config.include | each {|from|
+    cp --force --preserve [mode, timestamps, xattr] $from ($config.path | path join ($from | path basename))
+  }
+  ignore
 }
 
