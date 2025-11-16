@@ -1,6 +1,12 @@
 brew:
+  - carapace
+  - fish
+  - starship
   - nushell
 scoop:
+  - name: carapace-bin
+    bucket: extras
+  - starship
   - nu
 posix:
   path:
