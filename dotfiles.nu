@@ -3,9 +3,9 @@ const config_file_name   = "qd_config.yml"
 const global_config_path = $dotfiles_path | path join "global_config.yml"
 
 export def pwd       []: nothing -> path { $dotfiles_path } # Dotfiles location
-def tmp-cache        []: nothing -> path { $dotfiles_path | path join .tmp }
-def master-rec-path  []: nothing -> path { $dotfiles_path | path join master.rec }
-def master-key-path  []: nothing -> path { $dotfiles_path | path join master.key }
+export def tmp-cache        []: nothing -> path { $dotfiles_path | path join .tmp }
+export def master-rec-path  []: nothing -> path { $dotfiles_path | path join master.rec }
+export def master-key-path  []: nothing -> path { $dotfiles_path | path join master.key }
 
 const known_hosts  = [posix darwin ubuntu win windows]
 const host_aliases = {darwin: posix, ubuntu: posix, windows: win}
@@ -88,7 +88,7 @@ export def pull [config_name: string@syncable-configs] {
     if $it.encrypted {
       age --encrypt -R (master-rec-path) -o $"($to).age" $from
     } else {
-      cp --force --preserve [mode, ownership, timestamps, xattr] $from $to
+      cp --force --preserve [mode, timestamps, xattr] $from $to
     }
   }
 }
@@ -103,7 +103,7 @@ export def push [config_name: string@syncable-configs] {
     if $it.encrypted {
       age --decrypt -i (master-key-path) -o $to $"($from).age"
     } else {
-      cp --force --preserve [mode, ownership, timestamps, xattr] $from $to
+      cp --force --preserve [mode, timestamps, xattr] $from $to
     }
   }
 }
