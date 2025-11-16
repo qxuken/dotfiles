@@ -1,11 +1,32 @@
 brew:
- - yazi
+  - git
+  - jq
+  - ripgrep
+  - rg
+  - fd
+  - fzf
+  - zoxide
+  - resvg
+  - yazi
 scoop:
- - yazi
+  - git
+  - jq
+  - ripgrep
+  - rg
+  - fd
+  - fzf
+  - zoxide
+  - resvg
+  - yazi
 posix:
   path:
     - "%config%"
     - yazi
+ubuntu:
+  brew:
+    - "%root%"
+    - xclip
+    - xsel
 win:
   path:
     - "%appdata%"
