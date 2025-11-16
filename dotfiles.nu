@@ -88,9 +88,11 @@ export def pull [config_name: string@syncable-configs] {
     if $it.encrypted {
       age --encrypt -R (master-rec-path) -o $"($to).age" $from
     } else {
+      mkdir ($to | path parse | get parent)
       cp --force --preserve [mode, timestamps, xattr] $from $to
     }
   }
+  | ignore
 }
 # Push stored config files into local
 export def push [config_name: string@syncable-configs] {
@@ -103,8 +105,10 @@ export def push [config_name: string@syncable-configs] {
     if $it.encrypted {
       age --decrypt -i (master-key-path) -o $to $"($from).age"
     } else {
+      mkdir ($to | path parse | get parent)
       cp --force --preserve [mode, timestamps, xattr] $from $to
     }
   }
+  | ignore
 }
 
