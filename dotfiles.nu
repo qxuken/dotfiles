@@ -76,6 +76,20 @@ def config-names     []: nothing -> list<string> { load-configs | get name }
 def syncable-configs []: nothing -> list<string> { load-configs | where ($it.path | is-not-empty) | get name }
 def config-file-path [name: string@config-names]: nothing -> path { $dotfiles_path | path join $name $config_file_name }
 
+def pull-update [] {
+  cd $dotfiles_path
+  fossil update
+}
+def push-update [message: string] {
+  cd $dotfiles_path
+  fossil commit --comment $message
+}
+export def remote-diff [] {
+  cd $dotfiles_path
+  fossil update
+  fossil diff
+}
+
 def format-file-list [--strip-path: path]: list<path> -> list<path> {
   each {path relative-to $strip_path} | where ($it | path type) == file
 }
@@ -118,7 +132,12 @@ export def pull [config_name: string@syncable-configs] {
   ignore
 }
 # Pull all local configs into dotfiles
-export def pull-all [] { syncable-configs | each {|c| pull $c} }
+export def pull-all [--sync-with-remote (-s)] {
+  if $sync_with_remote {
+    pull-update
+  }
+  syncable-configs | each {|c| pull $c}
+}
 # Push stored config files into local
 export def push [config_name: string@syncable-configs] {
   let config = config-file-path $config_name | load-config
@@ -142,5 +161,10 @@ export def push [config_name: string@syncable-configs] {
   ignore
 }
 # Push all stored configs into local
-export def push-all [] { syncable-configs | each {|c| push $c} }
+export def push-all [--sync-with-remote (-s): string] {
+  if ($sync_with_remote | is-not-empty) {
+    push-update $sync_with_remote
+  }
+  syncable-configs | each {|c| push $c}
+}
 
