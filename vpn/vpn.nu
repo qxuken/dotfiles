@@ -6,14 +6,14 @@ def locations []: nothing -> string {
 }
 
 export def conf [loc: string@locations] {
-  open ($src | path join servers.yml)
+  open ($src | path join $servers_file)
   | get $loc
   | update cert {path expand}
 }
 
 export def connect [loc: string@locations] {
-  conf $loc
-  | sudo openconnect --server $in.host --certificate $in.cert -p $in.user
+  let config = conf $loc
+  sudo openconnect --server $config.host --certificate $config.cert -p $config.user
 }
 
 export def netherlands [] {
