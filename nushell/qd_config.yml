@@ -15,6 +15,6 @@ win:
     - "%appdata%"
     - nushell
 ignore:
-  - history.txt
-  - plugin.msgpackz
-  - vendor
+  - "**/history.txt"
+  - "**/plugin.msgpackz"
+  - "**/vendor/**"

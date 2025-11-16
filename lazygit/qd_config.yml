@@ -16,4 +16,4 @@ win:
     - "%appdata%"
     - lazygit
 ignore:
-  - state.yml
+  - "**/state.yml"

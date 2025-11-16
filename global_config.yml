@@ -1,0 +1,8 @@
+ignore:
+  - "**/.git/**"
+  - "**/.gitignore"
+  - "**/.editorconfig"
+include:
+  - ["%dotfiles%", .editorconfig]
+encrypt:
+  - "**/*.p12"
