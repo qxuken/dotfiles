@@ -71,10 +71,7 @@ def load-config []: path -> record {
   | insert src $parent
 }
 def load-configs []: nothing -> list<record> { get-configs | each {load-config} }
-
-def config-names     []: nothing -> list<string> { load-configs | get name }
-def syncable-configs []: nothing -> list<string> { load-configs | where ($it.path | is-not-empty) | get name }
-def config-file-path [name: string@config-names]: nothing -> path { $dotfiles_path | path join $name $config_file_name }
+def config-names []: nothing -> list<string> { load-configs | get name }
 
 # Pull remote updates
 export def remote-pull [] {
@@ -102,6 +99,8 @@ export def compile-dotfile [] {
   | save -f (home-path | path join .dotfiles.local.nu)
 }
 
+def syncable-configs []: nothing -> list<string> { load-configs | where ($it.path | is-not-empty) | get name }
+def config-file-path [name: string@config-names]: nothing -> path { $dotfiles_path | path join $name $config_file_name }
 def format-file-list [--strip-path: path]: list<path> -> list<path> {
   each {path relative-to $strip_path} | where ($it | path type) == file
 }
@@ -205,3 +204,41 @@ export def push-all [
   compile-dotfile
 }
 
+export def load-brew-config []: nothing -> list<string> {
+  load-configs | get brew | flatten | uniq
+}
+export def brew-install [] {
+  load-brew-config | brew install ...$in
+}
+export def brew-upgrade [] {
+  load-brew-config | brew upgrade ...$in
+}
+
+export def load-scoop-config []: nothing -> record<packages: list<string>, buckets: list<string>> {
+  let packages = load-configs
+  | get scoop
+  | flatten
+  | each {|it| 
+    if ($it | describe) == "string" {
+    {
+        name: $it
+        bucket: main
+      }
+    } else {
+      $it
+    }
+  }
+  | uniq-by name
+  {
+    packages: ($packages | each {|it| $"($it.bucket)/($it.name)"})
+    buckets: ($packages | get bucket | uniq)
+  }
+}
+export def scoop-install [] {
+  let config = load-scoop-config
+  $config.buckets  | each {|buck| scoop scoop bucket add $buck}
+  $config.packages | scoop install ...$in
+}
+export def scoop-upgrade [] {
+  load-scoop-config | scoop update ...$in
+}
