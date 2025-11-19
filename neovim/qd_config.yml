@@ -4,6 +4,8 @@ brew:
   - ripgrep
   - rg
   - fd
+  - cmake
+  - llvm
   - neovim
 scoop:
   - git
@@ -11,6 +13,8 @@ scoop:
   - ripgrep
   - rg
   - fd
+  - cmake
+  - llvm
   - neovim
 posix:
   path:
