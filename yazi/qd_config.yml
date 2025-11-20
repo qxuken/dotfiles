@@ -2,7 +2,6 @@ brew:
   - git
   - jq
   - ripgrep
-  - rg
   - fd
   - fzf
   - zoxide
@@ -12,7 +11,6 @@ scoop:
   - git
   - jq
   - ripgrep
-  - rg
   - fd
   - fzf
   - zoxide

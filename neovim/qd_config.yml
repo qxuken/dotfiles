@@ -2,7 +2,6 @@ brew:
   - git
   - fzf
   - ripgrep
-  - rg
   - fd
   - cmake
   - llvm
@@ -11,7 +10,6 @@ scoop:
   - git
   - fzf
   - ripgrep
-  - rg
   - fd
   - cmake
   - llvm
