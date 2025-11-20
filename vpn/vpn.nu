@@ -1,12 +1,21 @@
 const src = (path self .)
-const servers_file = ($src | path join config.yml)
+const config_path = ($src | path join config.yml)
 
 def locations []: nothing -> string {
-  open $servers_file | transpose key v | get key
+  open $config_path
+  | reject pbr
+  | transpose key v
+  | get key
+}
+
+export def pbr-reload [] {
+  open ($src | path join $config_path)
+  | get pbr
+  | run-external ssh $in.host $in.app reload
 }
 
 export def conf [loc: string@locations] {
-  open ($src | path join $servers_file)
+  open ($src | path join $config_path)
   | get $loc
   | update cert {|it| $src | path join $it.cert}
 }
@@ -23,4 +32,3 @@ export def netherlands [] {
 export def germany [] {
   connect germany
 }
-
