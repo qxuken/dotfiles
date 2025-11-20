@@ -236,9 +236,9 @@ export def load-scoop-config []: nothing -> record<packages: list<string>, bucke
 }
 export def scoop-install [] {
   let config = load-scoop-config
-  $config.buckets  | each {|buck| scoop scoop bucket add $buck}
+  $config.buckets  | each {|buck| scoop bucket add $buck}
   $config.packages | scoop install ...$in
 }
 export def scoop-upgrade [] {
-  load-scoop-config | scoop update ...$in
+  load-scoop-config | get packages | scoop update ...$in
 }
