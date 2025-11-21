@@ -1,5 +1,5 @@
 # Retrieve sorted history for npm package
-export def history [package_name: string] {
+export def version-history [package_name: string] {
     npm show --json $package_name
     | from json
     | get time

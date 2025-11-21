@@ -5,8 +5,8 @@ const global_config_path = $dotfiles_path | path join "global_config.yml"
 export def pwd       []: nothing -> path { $dotfiles_path } # Dotfiles location
 def master-rec-path  []: nothing -> path { $dotfiles_path | path join master.rec }
 def master-key-path  []: nothing -> path { $dotfiles_path | path join master.key }
-def tmp        []: nothing -> path { $dotfiles_path | path join .tmp }
-def tmp-file   []: nothing -> path {
+def tmp              []: nothing -> path { $dotfiles_path | path join .tmp }
+def tmp-file         []: nothing -> path {
   let dir = tmp
   mkdir $dir
   let file = $dir | path join (random uuid -v 7)
@@ -19,13 +19,15 @@ const host_aliases = {darwin: posix, ubuntu: posix, windows: win}
 def sys-host-name []: nothing -> string { sys host | get name }
 
 def home-path [] { "~" | path expand }
-def interpolate-path []: list<string> -> path {
-  each {|it|
+def interpolate-path [path?: string]: list<string> -> path {
+  $in | each {|it|
     match $it {
       "%dotfiles%"            => (pwd)
+      "%path%"                => $path
+      "%dotfiles-cache%"      => (home-path | path join .dotfiles_cache)
       "%home%"                => (home-path)
       "%config%"              => (home-path | path join .config)
-      "%application_support%" => (home-path | path join Library 'Application Support')
+      "%application-support%" => (home-path | path join Library 'Application Support')
       "%local-appdata%"       => ($env.LOCALAPPDATA)
       "%appdata%"             => ($env.APPDATA)
       _                       => $it
@@ -66,7 +68,7 @@ def load-config []: path -> record {
   | upsert brew { default [] | interpolate-string-list-field $raw_config brew }
   | upsert scoop { default [] | interpolate-string-list-field $raw_config scoop }
   | upsert path { default [] | interpolate-path }
-  | upsert include { default [] | each { interpolate-path } }
+  | upsert include {|conf| $conf.include? | default [] | each {|row| $row | interpolate-path $conf.path } }
   | insert name ($parent | path basename)
   | insert src $parent
 }
@@ -93,10 +95,15 @@ export def remote-diff [] {
 # Compile dotfile
 export def compile-dotfile [] {
   let config = load-configs
-  $config | each --flatten {get -o dotfile_include | default []} | each {interpolate-path} | uniq | each {|it| $"use ($it)"}
-  | append ($config | each --flatten {get -o dotfile_source | default []} | each {interpolate-path} | uniq | each {|it| $"source ($it)"})
+  $config | each --flatten {|it| $it.dotfile_include? | default [] | each {interpolate-path $it.path?}} | uniq | each {|it| $"use ($it)"}
+  | append ($config | each --flatten {|it| $it.dotfile_source? | default [] | each {interpolate-path $it.path?}} | uniq | each {|it| $"source ($it)"})
   | str join (char newline)
   | save -f (home-path | path join .dotfiles.local.nu)
+
+  $config | each --flatten {|it| $it.dotfile_env_include? | default [] | each {interpolate-path $it.path?}} | uniq | each {|it| $"use ($it)"}
+  | append ($config | each --flatten {|it| $it.dotfile_env_source? | default [] | each {interpolate-path $it.path?}} | uniq | each {|it| $"source ($it)"})
+  | str join (char newline)
+  | save -f (home-path | path join .dotfiles-env.local.nu)
 }
 
 def syncable-configs []: nothing -> list<string> { load-configs | where ($it.path | is-not-empty) | get name }
@@ -171,6 +178,11 @@ export def push [
     remote-pull
   }
   let config = config-file-path $config_name | load-config
+  let is_first_push = not ($config.path | path exists)
+  let pre_init_script_path = $config.path | path join qd_pre_init.nu
+  if $is_first_push and ($pre_init_script_path | path exists) {
+    nu $pre_init_script_path
+  }
   $config.src | files-list | each {|it|
     let from = ($config.src | path join $it.path)
     let to = ($config.path | path join $it.path)
@@ -188,6 +200,10 @@ export def push [
     let to = $config.path | path join ($from | path basename)
     cp --update $from $to
   }
+  let init_script_path = $config.path | path join qd_init.nu
+  if $is_first_push and ($init_script_path | path exists) {
+    nu $init_script_path
+  }
   if not $no_recomplie {
     compile-dotfile
   }
@@ -204,7 +220,7 @@ export def push-all [
   compile-dotfile
 }
 
-export def load-brew-config []: nothing -> record<packages: list<string>, taps: list<string>> {
+def load-brew-config []: nothing -> record<packages: list<string>, taps: list<string>> {
   load-configs
   | get brew
   | flatten
@@ -224,16 +240,18 @@ export def load-brew-config []: nothing -> record<packages: list<string>, taps: 
     taps: ($in | get tap | uniq | where (is-not-empty))
   }
 }
+# Install packages from list
 export def brew-install [] {
   let config = load-brew-config
   $config | get taps | each {|it| brew tap $it}
   brew install ...($config | get packages)
 }
+# Upgrade packages from list
 export def brew-upgrade [] {
   load-brew-config | get packages | brew upgrade ...$in
 }
 
-export def load-scoop-config []: nothing -> record<packages: list<string>, buckets: list<string>> {
+def load-scoop-config []: nothing -> record<packages: list<string>, buckets: list<string>> {
   load-configs
   | get scoop
   | flatten
@@ -253,11 +271,24 @@ export def load-scoop-config []: nothing -> record<packages: list<string>, bucke
     buckets: ($in | get bucket | uniq)
   }
 }
+# Install packages from list
 export def scoop-install [] {
   let config = load-scoop-config
   $config.buckets  | each {|buck| scoop bucket add $buck}
   $config.packages | scoop install ...$in
 }
+# Upgrade packages from list
 export def scoop-upgrade [] {
   load-scoop-config | get packages | scoop update ...$in
+}
+
+# Install packages and push all configs
+def init [] {
+  if (which brew | is-not-empty) {
+    brew-install
+  }
+  if (which scoop | is-not-empty) {
+    scoop-install
+  }
+  push-all
 }

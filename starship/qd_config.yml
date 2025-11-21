@@ -1,0 +1,13 @@
+brew:
+  - starship
+scoop:
+  - starship
+path:
+  - "%config%"
+  - starship
+dotfile_include:
+  - ["%path%", starship.nu]
+dotfile_env_source:
+  - ["%path%", starship-env.nu]
+ignore:
+  - "**/starship.nu"

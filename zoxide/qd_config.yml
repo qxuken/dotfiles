@@ -1,0 +1,11 @@
+brew:
+  - zoxide
+scoop:
+  - zoxide
+path:
+  - "%dotfiles-cache%"
+  - zoxide
+dotfile_source:
+  - ["%path%", zoxide-init.nu]
+ignore:
+  - "**/zoxide-init.nu"

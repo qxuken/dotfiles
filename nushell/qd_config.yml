@@ -14,7 +14,7 @@ posix:
     - nushell
 darwin:
   path:
-    - "%application_support%"
+    - "%application-support%"
     - nushell
 win:
   path:
