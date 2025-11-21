@@ -9,7 +9,7 @@ posix:
     - lazygit
 darwin:
   path:
-    - "%application_support%"
+    - "%application-support%"
     - lazygit
 win:
   path:

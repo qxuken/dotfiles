@@ -16,17 +16,19 @@ scoop:
   - zoxide
   - resvg
   - yazi
-posix:
-  path:
-    - "%config%"
-    - yazi
 ubuntu:
   brew:
     - "%root%"
     - xclip
     - xsel
+posix:
+  path:
+    - "%config%"
+    - yazi
 win:
   path:
     - "%appdata%"
     - yazi
     - config
+dotfile_source:
+  - ["%path%", yazi.nu]

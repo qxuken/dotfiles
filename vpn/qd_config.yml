@@ -9,4 +9,4 @@ encrypt:
   - "**/*.p12"
   - "**/config.yml"
 dotfile_include:
-  - ["%home%", vpn, vpn.nu]
+  - ["%path%", vpn.nu]

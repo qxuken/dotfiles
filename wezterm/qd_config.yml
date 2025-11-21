@@ -7,5 +7,7 @@ path:
   - wezterm
 ubuntu:
   brew:
+  ignore:
+    - "**/*"
 encrypt:
   - "**/fonts/BerkleyMono/*.ttf"

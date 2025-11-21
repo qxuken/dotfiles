@@ -5,6 +5,7 @@ brew:
   - fd
   - cmake
   - llvm
+  - fnm
   - neovim
 scoop:
   - git
@@ -13,17 +14,20 @@ scoop:
   - fd
   - cmake
   - llvm
+  - fnm
   - neovim
-posix:
-  path:
-    - "%config%"
-    - nvim
 ubuntu:
   brew:
     - "%root%"
     - xclip
     - xsel
+posix:
+  path:
+    - "%config%"
+    - nvim
 win:
   path:
     - "%local-appdata%"
     - nvim
+dotfile_env_source:
+  - ["%path%", neovim-env.nu]

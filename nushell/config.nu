@@ -151,36 +151,15 @@ $env.config = {
 }
 
 use ./config/aliases.nu *
-
-# TODO: replace with modules
-source ./apps/zoxide.nu
-
-if not ('~/.cache/starship/init.nu' | path exists) {
-    starship init nu | save ~/.cache/starship/init.nu
-}
-use ~/.cache/starship/init.nu
-
-# if (which carapace | is-empty) {
-#     print 'carapace not found'
-# }
-# if (which zoxide | is-empty) {
-#     print 'zoxide not found'
-# }
-# if (which starship | is-empty) {
-#     print 'starship not found'
-# }
-
 source ./config/theme.nu
 
-use ./apps/yazi.nu *
 source ./apps/opam.nu
-
 use ./scripts/load_dotenv.nu *
 use ./scripts/convert_to_webp.nu *
 
-source ~/.local.nu
-
-# use ./apps/conda.nu
 use ./apps/uv.nu *
 use ./scripts/npm.nu
+
+source ~/.dotfiles.local.nu
+source ~/.local.nu
 
