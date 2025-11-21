@@ -5,5 +5,7 @@ scoop:
 path:
   - "%config%"
   - wezterm
+ubuntu:
+  brew:
 encrypt:
   - "**/fonts/BerkleyMono/*.ttf"

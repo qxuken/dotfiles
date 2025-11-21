@@ -204,21 +204,40 @@ export def push-all [
   compile-dotfile
 }
 
-export def load-brew-config []: nothing -> list<string> {
-  load-configs | get brew | flatten | uniq
+export def load-brew-config []: nothing -> record<packages: list<string>, taps: list<string>> {
+  load-configs
+  | get brew
+  | flatten
+  | each {|it|
+    if ($it | describe) == "string" {
+    {
+        name: $it
+        tap: null
+      }
+    } else {
+      $it
+    }
+  }
+  | uniq-by name
+  | {
+    packages: ($in | get name)
+    taps: ($in | get tap | uniq | where (is-not-empty))
+  }
 }
 export def brew-install [] {
-  load-brew-config | brew install ...$in
+  let config = load-brew-config
+  $config | get taps | each {|it| brew tap $it}
+  brew install ...($config | get packages)
 }
 export def brew-upgrade [] {
-  load-brew-config | brew upgrade ...$in
+  load-brew-config | get packages | brew upgrade ...$in
 }
 
 export def load-scoop-config []: nothing -> record<packages: list<string>, buckets: list<string>> {
-  let packages = load-configs
+  load-configs
   | get scoop
   | flatten
-  | each {|it| 
+  | each {|it|
     if ($it | describe) == "string" {
     {
         name: $it
@@ -229,9 +248,9 @@ export def load-scoop-config []: nothing -> record<packages: list<string>, bucke
     }
   }
   | uniq-by name
-  {
-    packages: ($packages | each {|it| $"($it.bucket)/($it.name)"})
-    buckets: ($packages | get bucket | uniq)
+  | {
+    packages: ($in | each {|it| $"($it.bucket)/($it.name)"})
+    buckets: ($in | get bucket | uniq)
   }
 }
 export def scoop-install [] {
