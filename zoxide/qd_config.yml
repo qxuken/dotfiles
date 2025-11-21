@@ -6,6 +6,6 @@ path:
   - "%dotfiles-cache%"
   - zoxide
 dotfile_source:
-  - ["%path%", zoxide-init.nu]
+  - ["%path%", zoxide.nu]
 ignore:
-  - "**/zoxide-init.nu"
+  - "**/zoxide.nu"
