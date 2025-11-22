@@ -2,6 +2,7 @@ ignore:
   - "**/.git/**"
   - "**/.gitignore"
   - "**/.editorconfig"
+  - "**/.DS_Store"
 include:
   - ["%dotfiles%", .editorconfig]
 dotfile_include:
