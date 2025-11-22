@@ -108,10 +108,10 @@ export def compile-dotfile [] {
 
 def syncable-configs []: nothing -> list<string> { load-configs | where ($it.path | is-not-empty) | get name }
 def config-file-path [name: string@config-names]: nothing -> path { $dotfiles_path | path join $name $config_file_name }
-def format-file-list [--strip-path: path]: list<path> -> list<path> {
+def format-files [--strip-path: path]: list<path> -> list<path> {
   each {path relative-to $strip_path} | where ($it | path type) == file
 }
-def files-list [--ignore: list<glob> = [], --encryption-globs: list<glob>]: path -> list<record> {
+def files [--ignore: list<glob> = [], --encrypt: list<glob>]: path -> list<record> {
   let input = $in
   if ($input | is-empty) {
     error make {msg: "No path provided", help: "Config is missing path", label: {
@@ -120,17 +120,29 @@ def files-list [--ignore: list<glob> = [], --encryption-globs: list<glob>]: path
     }}
   }
   cd $input
-  glob --exclude (["**/*.age" "**/qd_config.yml"] | append $ignore | append $encryption_globs) */**
-  | format-file-list --strip-path $input
+  glob --exclude (["**/*.age" "**/qd_config.yml"] | append $ignore | append $encrypt) */**
+  | format-files --strip-path $input
   | wrap path
   | insert encrypted false
-  | append ($encryption_globs
+  | append ($encrypt
             | append **/*.age
             | each --flatten {|it| glob --exclude $ignore $it}
-            | format-file-list --strip-path $input
+            | format-files --strip-path $input
             | str replace -r ".age$" ""
             | wrap path
             | insert encrypted true)
+}
+def src-files []: record -> list<record> {
+  get src | files
+}
+def dest-files []: record -> list<record> {
+  let config = $in
+  $config.path | files --ignore ($config.ignore?) --encrypt ($config.encrypt)
+}
+# Difference (IN ∖ ARG) - all extra files from IN as result
+def extra-files [exclude: list<record>]: list<record> -> list<record> {
+  let exclude = $exclude | get path
+  $in | where $it.path not-in $exclude
 }
 # Pull local config files into dotfiles
 export def pull [
@@ -139,8 +151,8 @@ export def pull [
   --no-recomplie
 ] {
   let config = config-file-path $config_name | load-config
-  $config.path
-  | files-list --ignore ($config.ignore?) --encryption-globs ($config.encrypt)
+  let dest_files = $config | dest-files
+  $dest_files
   | each {|it|
     let from = ($config.path | path join $it.path)
     let to = ($config.src | path join $it.path)
@@ -150,6 +162,10 @@ export def pull [
       mkdir ($to | path parse | get parent)
       cp --update $from $to
     }
+  }
+  $config | src-files | extra-files $dest_files | each {|it|
+    let file_name = if $it.encrypted { $"($it.path).age" } else { $it.path }
+    rm ($config.src | path join $file_name)
   }
   if ($sync_with_remote | is-not-empty) {
     remote-push $sync_with_remote
@@ -183,7 +199,10 @@ export def push [
   if $is_first_push and ($pre_init_script_path | path exists) {
     nu $pre_init_script_path
   }
-  $config.src | files-list | each {|it|
+  let src_files = $config | src-files
+
+  $src_files
+  | each {|it|
     let from = ($config.src | path join $it.path)
     let to = ($config.path | path join $it.path)
     mkdir ($to | path parse | get parent)
@@ -200,6 +219,7 @@ export def push [
     let to = $config.path | path join ($from | path basename)
     cp --update $from $to
   }
+  $config | dest-files | extra-files $src_files | each {|it| rm ($config.path | path join $it.path)}
   let init_script_path = $config.path | path join qd_init.nu
   if $is_first_push and ($init_script_path | path exists) {
     nu $init_script_path
@@ -283,7 +303,7 @@ export def scoop-upgrade [] {
 }
 
 # Install packages and push all configs
-def init [] {
+export def init [] {
   if (which brew | is-not-empty) {
     brew-install
   }
