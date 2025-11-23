@@ -83,18 +83,21 @@ def get-configs   []: nothing -> list<path> {
 # - <host> / <host-alias>: same structure for host-specific overrides
 def load-config []: path -> record {
   let host = sys-host-name
-  let parent = $in | path parse | get parent
-  let global_config = global-config
-  let raw_config = open $in
-  if ("if" not-in $raw_config) or not ($raw_config.if | all {match-tags $global_config.machine_tags}) {
-    return $global_config
-  }
-
   let host_alias = (
     $host_aliases
     | get -o --ignore-case $host
     | default 'unknown'
   )
+
+  let parent = $in | path parse | get parent
+  let name = $parent | path basename
+
+  let global_config = global-config
+  let raw_config = open $in
+
+  if not ($raw_config.if? | default [] | all {match-tags $global_config.machine_tags}) {
+    return ($global_config | insert name $name | insert should_ignore true)
+  }
 
   # Merge order is important
   global-config
@@ -121,12 +124,12 @@ def load-config []: path -> record {
       }
     }
   }
-  | insert name ($parent | path basename)
+  | insert name $name
   | insert src $parent
 }
 def config-src   []: [record -> path, record -> nothing] { $in.src? }
 def config-dest  []: [record -> path, record -> nothing] { $in.dest? }
-def load-configs []: nothing -> list<record> { get-configs | each {load-config} }
+def load-configs []: nothing -> list<record> { get-configs | each {load-config} | where ("should_ignore" not-in $it)}
 def config-names []: nothing -> list<string> { load-configs | get name }
 def config-file-path [name: string@config-names]: nothing -> path { $dotfiles_path | path join $name $config_file_name }
 # Load config to check structure
@@ -208,7 +211,7 @@ def files-difference-with [exclude: list<record>]: list<record> -> list<record> 
 # Pull local config files into dotfiles
 export def pull [
   config_name: string@syncable-configs
-  --sync-with-remote (-s) # Push updates to remote after pulling from local
+  --sync-with-remote (-s): string # Push updates to remote after pulling from local
   --no-recompile
 ] {
   let config = config-file-path $config_name | load-config
@@ -335,8 +338,10 @@ def load-brew-config []: nothing -> record<packages: list<string>, taps: list<st
 # Install packages from list
 export def brew-install [] {
   let config = load-brew-config
-  $config | get taps | each {|it| brew tap $it}
-  brew install ...($config | get packages)
+  $config.taps | each {|it| brew tap $it}
+  if ($config.packages | is-not-empty) {
+    brew install ...$config.packages
+  }
 }
 # Upgrade packages from list
 export def brew-upgrade [] { load-brew-config | get packages | brew upgrade ...$in }
@@ -364,8 +369,10 @@ def load-scoop-config []: nothing -> record<packages: list<string>, buckets: lis
 # Install packages from list
 export def scoop-install [] {
   let config = load-scoop-config
-  $config.buckets  | each {|buck| scoop bucket add $buck}
-  $config.packages | scoop install ...$in
+  $config.buckets | each {|buck| scoop bucket add $buck}
+  if ($config.packages | is-not-empty) {
+    $config.packages | scoop install ...$in
+  }
 }
 # Upgrade packages from list
 export def scoop-upgrade [] { load-scoop-config | get packages | scoop update ...$in }
