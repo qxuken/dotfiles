@@ -187,7 +187,18 @@ export def pull [
     let to = $config | config-src | path join $it.path
     mkdir ($to | path parse | get parent)
     if $it.encrypted {
-      age --encrypt -R $master_rec_path -o $"($to).age" $from
+      let target = $"($to).age"
+      let enc = {|| age --encrypt -R $master_rec_path -o $target $from }
+      if not ($target | path exists) {
+        do $enc
+        return
+      }
+      let out = make-tmp-file
+      age --decrypt -i $master_key_path -o $out $target
+      if not (same-files $out $from) {
+        do $enc
+      }
+      rm $out
     } else {
       cp --update $from $to
     }
@@ -335,4 +346,8 @@ export def init [] {
     scoop-install
   }
   push-all
+}
+
+export def same-files [file1: path, file2: path]: nothing -> bool {
+  (open -r $file1) == (open -r $file2)
 }
