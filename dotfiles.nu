@@ -154,7 +154,7 @@ export def remote-diff [] {
 
 # Compile dotfile
 export def compile-home-dotfile [] {
-  let f = load-configs
+  let imports = load-configs
   | append (global-config)
   | each --flatten {|c|
     let dest = $c | config-dest
@@ -167,12 +167,8 @@ export def compile-home-dotfile [] {
       | wrap path | insert env true
     )
   }
-  | {
-    config: ($in | where env == false| get path | uniq | sort -r | str join (char newline))
-    env:    ($in | where env == true | get path | uniq | sort -r | str join (char newline))
-  }
-  $f.config | save -f (home-path | path join .dotfiles.local.nu)
-  $f.env    | save -f (home-path | path join .dotfiles-env.local.nu)
+  $imports | where env == false | get path | uniq | sort -r | str join (char newline) | save -f (home-path | path join .dotfiles.local.nu)
+  $imports | where env == true  | get path | uniq | sort -r | str join (char newline) | save -f (home-path | path join .dotfiles-env.local.nu)
 }
 
 def syncable-configs []: nothing -> list<string> { load-configs | where ($it | config-dest | is-not-empty) | get name }
