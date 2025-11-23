@@ -1,0 +1,2 @@
+use ./aliases.nu *
+

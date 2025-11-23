@@ -1,0 +1,11 @@
+brew:
+  - uv
+scoop:
+  - uv
+path:
+  - "%dotfiles-cache%"
+  - python
+dotfile_source:
+  - ["%path%", "config.nu"]
+dotfile_env_source:
+  - ["%path%", env.nu]

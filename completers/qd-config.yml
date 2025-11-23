@@ -1,0 +1,13 @@
+brew:
+  - carapace
+  - fish
+scoop:
+  - name: carapace-bin
+    bucket: extras
+path:
+  - "%dotfiles-cache%"
+  - completers
+dotfile_source:
+  - ["%path%", "config.nu"]
+dotfile_env_source:
+  - ["%path%", env.nu]

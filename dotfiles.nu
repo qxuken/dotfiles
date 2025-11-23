@@ -1,6 +1,6 @@
 const dotfiles_path      = path self .
-const config_file_name   = "qd_config.yml"
-const global_config_path = $dotfiles_path | path join "global_config.yml"
+const config_file_name   = "qd-config.yml"
+const global_config_path = $dotfiles_path | path join "global-config.yml"
 const master_rec_path    = $dotfiles_path | path join master.rec
 const master_key_path    = $dotfiles_path | path join master.key
 const tmp_path           = $dotfiles_path | path join .tmp
@@ -23,7 +23,7 @@ def interpolate-path [path?: string]: list<string> -> path {
     match $it {
       "%dotfiles%"            => (pwd)
       "%path%"                => $path
-      "%dotfiles-cache%"      => (home-path | path join .dotfiles_cache)
+      "%dotfiles-cache%"      => (home-path | path join .dotfiles-cache)
       "%home%"                => (home-path)
       "%config%"              => (home-path | path join .config)
       "%application-support%" => (home-path | path join Library 'Application Support')
@@ -45,15 +45,32 @@ def interpolate-string-list-field [config: record, field: string]: [
     }
   }
 }
+def match-tags [machine_tags: list<string>]: string -> bool {
+  if ($in starts-with "!") {
+    ($in | str substring 1..) not-in $machine_tags
+  } else {
+    $in in $machine_tags
+  }
+}
 
-def global-config []: nothing -> record { open $global_config_path }
+def global-config []: nothing -> record {
+  mut auto_tags = []
+  if ("WSL_DISTRO_NAME" in $env) {
+    $auto_tags = $auto_tags | append wsl
+  }
+  let auto_tags = $auto_tags
+  open $global_config_path
+  | insert machine_tags {
+    $env.DOTFILES_TAGS? | default [] | append $auto_tags
+  }
+}
 def get-configs   []: nothing -> list<path> {
   cd $dotfiles_path
   glob --no-dir $"*/($config_file_name)"
 }
 # Config schema (per config dir):
-# - src: path
-# - dest: path
+# - path: path
+# - files: list<record<src: list<string>, dest: list<string>, if: list<stirng>>>
 # - include: list<list<string>>   # path segments / tokens to interpolate
 # - encrypt: list<glob>
 # - ignore: list<glob>
@@ -67,7 +84,11 @@ def get-configs   []: nothing -> list<path> {
 def load-config []: path -> record {
   let host = sys-host-name
   let parent = $in | path parse | get parent
+  let global_config = global-config
   let raw_config = open $in
+  if ("if" not-in $raw_config) or not ($raw_config.if | all {match-tags $global_config.machine_tags}) {
+    return $global_config
+  }
 
   let host_alias = (
     $host_aliases
@@ -80,7 +101,7 @@ def load-config []: path -> record {
   | merge deep --strategy append $raw_config
   | merge ($raw_config | get -o --ignore-case $host_alias | default {})
   | merge ($raw_config | get -o --ignore-case $host | default {})
-  | reject -o --ignore-case ...$known_hosts
+  | reject -o --ignore-case "if" ...$known_hosts
   | upsert brew { default [] | interpolate-string-list-field $raw_config brew }
   | upsert scoop { default [] | interpolate-string-list-field $raw_config scoop }
   | upsert path { default [] | interpolate-path }
@@ -88,6 +109,17 @@ def load-config []: path -> record {
   | upsert include {|c|
     $c.include? | default []
     | each {|row| $row | interpolate-path $c.dest }
+  }
+  | upsert files {|c|
+    $c.files? | default []
+    | interpolate-string-list-field $raw_config files
+    | where {|row| $row.if? | default [] | all {match-tags $c.machine_tags}}
+    | each {|row|
+      {
+        src: ($row.src | interpolate-path $c.dest)
+        dest: ($row.dest | interpolate-path $c.dest)
+      }
+    }
   }
   | insert name ($parent | path basename)
   | insert src $parent
@@ -119,14 +151,14 @@ export def remote-diff [] {
 
 # Compile dotfile
 export def compile-home-dotfile [] {
-  let configs = load-configs
-  $configs | each --flatten {|c| $c.dotfile_include? | default [] | each {interpolate-path ($c | config-dest)}} | uniq | each {|p| $"use ($p)"}
-  | append ($configs | each --flatten {|c| $c.dotfile_source? | default [] | each {interpolate-path ($c | config-dest)}} | uniq | each {|p| $"source ($p)"})
+  let configs = load-configs | append (global-config)
+  $configs | each --flatten {|c| $c.dotfile_include? | default [] | each {interpolate-path ($c | config-dest)}} | uniq | each {|p| $'use "($p)"'}
+  | append ($configs | each --flatten {|c| $c.dotfile_source? | default [] | each {interpolate-path ($c | config-dest)}} | uniq | each {|p| $'source "($p)"'})
   | str join (char newline)
   | save -f (home-path | path join .dotfiles.local.nu)
 
-  $configs | each --flatten {|c| $c.dotfile_env_include? | default [] | each {interpolate-path ($c | config-dest)}} | uniq | each {|p| $"use ($p)"}
-  | append ($configs | each --flatten {|c| $c.dotfile_env_source? | default [] | each {interpolate-path ($c | config-dest)}} | uniq | each {|p| $"source ($p)"})
+  $configs | each --flatten {|c| $c.dotfile_env_include? | default [] | each {interpolate-path ($c | config-dest)}} | uniq | each {|p| $'use "($p)"'}
+  | append ($configs | each --flatten {|c| $c.dotfile_env_source? | default [] | each {interpolate-path ($c | config-dest)}} | uniq | each {|p| $'source "($p)"'})
   | str join (char newline)
   | save -f (home-path | path join .dotfiles-env.local.nu)
 }
@@ -176,13 +208,12 @@ def files-difference-with [exclude: list<record>]: list<record> -> list<record> 
 # Pull local config files into dotfiles
 export def pull [
   config_name: string@syncable-configs
-  --sync-with-remote (-s): string # Push updates to remote after pulling from local
+  --sync-with-remote (-s) # Push updates to remote after pulling from local
   --no-recompile
 ] {
   let config = config-file-path $config_name | load-config
   let dest_files = $config | files-in-dest
-  $dest_files
-  | each {|it|
+  $dest_files | each {|it|
     let from = $config | config-dest | path join $it.path
     let to = $config | config-src | path join $it.path
     mkdir ($to | path parse | get parent)
@@ -203,6 +234,7 @@ export def pull [
       cp --update $from $to
     }
   }
+  $config.files | each {|it| cp --update $it.dest $it.src}
   $config | files-in-src | files-difference-with $dest_files | each {|it|
     let file_name = if $it.encrypted { $"($it.path).age" } else { $it.path }
     rm ($config | config-src | path join $file_name)
@@ -235,7 +267,7 @@ export def push [
   }
   let config = config-file-path $config_name | load-config
   let is_first_push = not ($config | config-dest | path exists)
-  let pre_init_script_path = $config | config-dest | path join qd_pre_init.nu
+  let pre_init_script_path = $config | config-dest | path join qd-pre-init.nu
   if $is_first_push and ($pre_init_script_path | path exists) {
     nu $pre_init_script_path
   }
@@ -254,12 +286,13 @@ export def push [
       cp --update $from $to
     }
   }
+  $config.files | each {|it| cp --update $it.src $it.dest}
   $config.include | each {|from|
     let to = $config | config-dest | path join ($from | path basename)
     cp --update $from $to
   }
   $config | files-in-dest | files-difference-with $src_files | each {|f| rm ($config | config-dest | path join $f.path)}
-  let init_script_path = $config | config-dest | path join qd_init.nu
+  let init_script_path = $config | config-dest | path join qd-init.nu
   if $is_first_push and ($init_script_path | path exists) {
     nu $init_script_path
   }
@@ -348,6 +381,6 @@ export def init [] {
   push-all
 }
 
-export def same-files [file1: path, file2: path]: nothing -> bool {
+def same-files [file1: path, file2: path]: nothing -> bool {
   (open -r $file1) == (open -r $file2)
 }
