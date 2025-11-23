@@ -154,16 +154,25 @@ export def remote-diff [] {
 
 # Compile dotfile
 export def compile-home-dotfile [] {
-  let configs = load-configs | append (global-config)
-  $configs | each --flatten {|c| $c.dotfile_include? | default [] | each {interpolate-path ($c | config-dest)}} | uniq | each {|p| $'use "($p)"'}
-  | append ($configs | each --flatten {|c| $c.dotfile_source? | default [] | each {interpolate-path ($c | config-dest)}} | uniq | each {|p| $'source "($p)"'})
-  | str join (char newline)
-  | save -f (home-path | path join .dotfiles.local.nu)
-
-  $configs | each --flatten {|c| $c.dotfile_env_include? | default [] | each {interpolate-path ($c | config-dest)}} | uniq | each {|p| $'use "($p)"'}
-  | append ($configs | each --flatten {|c| $c.dotfile_env_source? | default [] | each {interpolate-path ($c | config-dest)}} | uniq | each {|p| $'source "($p)"'})
-  | str join (char newline)
-  | save -f (home-path | path join .dotfiles-env.local.nu)
+  let f = load-configs
+  | append (global-config)
+  | each --flatten {|c|
+    let dest = $c | config-dest
+    $c.dotfile_include? | default [] | each {interpolate-path $dest  | $'use `($in)`'}
+    | append ($c.dotfile_source? | default [] | each {interpolate-path $dest | $'source `($in)`'})
+    | wrap path | insert env false
+    | append (
+      $c.dotfile_env_include? | default [] | each {interpolate-path $dest | $'use `($in)`'}
+      | append ($c.dotfile_env_source?  | default [] | each {interpolate-path $dest | $'source `($in)`'})
+      | wrap path | insert env true
+    )
+  }
+  | {
+    config: ($in | where env == false| get path | uniq | sort -r | str join (char newline))
+    env:    ($in | where env == true | get path | uniq | sort -r | str join (char newline))
+  }
+  $f.config | save -f (home-path | path join .dotfiles.local.nu)
+  $f.env    | save -f (home-path | path join .dotfiles-env.local.nu)
 }
 
 def syncable-configs []: nothing -> list<string> { load-configs | where ($it | config-dest | is-not-empty) | get name }
