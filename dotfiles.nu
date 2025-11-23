@@ -12,6 +12,7 @@ def make-tmp-file []: nothing -> path {
   touch $file
   $file
 }
+def cleanup-tmp [] { rm $tmp_path }
 
 const known_hosts  = [posix darwin ubuntu win windows]
 const host_aliases = {darwin: posix, ubuntu: posix, windows: win}
@@ -263,6 +264,7 @@ export def pull-all [
     remote-push $sync_with_remote
   }
   compile-home-dotfile
+  cleanup-tmp
 }
 # Push stored config files into local
 export def push [
@@ -318,6 +320,7 @@ export def push-all [
   }
   syncable-configs | each {|c| push --no-recompile $c}
   compile-home-dotfile
+  cleanup-tmp
 }
 
 def load-brew-config []: nothing -> record<packages: list<string>, taps: list<string>> {
