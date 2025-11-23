@@ -1,3 +1,4 @@
+if: ["!wsl"]
 brew:
   - wezterm
 scoop:
@@ -5,9 +6,5 @@ scoop:
 path:
   - "%config%"
   - wezterm
-ubuntu:
-  brew:
-  ignore:
-    - "**/*"
 encrypt:
   - "**/fonts/BerkleyMono/*.ttf"

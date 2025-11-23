@@ -7,5 +7,7 @@ include:
   - ["%dotfiles%", .editorconfig]
 dotfile_include:
   - ["%dotfiles%", dotfiles.nu]
+dotfile_source:
+  - ["%dotfiles%", config.nu]
 encrypt:
   - "**/*.p12"

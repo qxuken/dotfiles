@@ -1,5 +1,4 @@
 module completions {
-
   def "nu-complete uv python_preference" [] {
     [ "only-managed" "managed" "system" "only-system" ]
   }

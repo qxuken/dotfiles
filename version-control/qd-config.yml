@@ -1,0 +1,15 @@
+brew:
+  - git
+  - fossil
+scoop:
+  - git
+  - fossil
+path:
+  - "%dotfiles-cache%"
+  - "version-control"
+files:
+  - src: ["%path%", ".gitconfig"]
+    dest: ["%home%", ".gitconfig"]
+    if: ["!work"]
+dotfile_source:
+  - ["%path%", "config.nu"]

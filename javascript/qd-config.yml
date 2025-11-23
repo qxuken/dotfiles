@@ -1,0 +1,11 @@
+brew:
+  - fnm
+scoop:
+  - fnm
+path:
+  - "%dotfiles-cache%"
+  - javascript
+dotfile_source:
+  - ["%path%", "config.nu"]
+dotfile_env_source:
+  - ["%path%", env.nu]

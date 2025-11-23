@@ -1,0 +1,1 @@
+export alias lz = lazygit

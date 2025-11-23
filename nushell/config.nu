@@ -4,7 +4,6 @@
 
 use ./config/keybinds.nu [keybinds]
 use ./config/menus.nu [menus]
-use ./config/completers.nu *
 
 $env.config = {
     show_banner: false # true or false to enable or disable the welcome banner at startup
@@ -78,7 +77,6 @@ $env.config = {
         external: {
             enable: true # set to false to prevent nushell looking into $env.PATH to find more suggestions, `false` recommended for WSL users as this look up may be very slow
             max_results: 100 # setting it lower can improve completion performance at the cost of omitting some options
-            completer: (external_completer) # check 'carapace_completer' above as an example
         }
         use_ls_colors: true # set this to true to enable file/path/directory completions using LS_COLORS
     }
@@ -152,13 +150,6 @@ $env.config = {
 
 use ./config/aliases.nu *
 source ./config/theme.nu
-
-source ./apps/opam.nu
-use ./scripts/load_dotenv.nu *
-use ./scripts/convert_to_webp.nu *
-
-use ./apps/uv.nu *
-use ./scripts/npm.nu
 
 source ~/.dotfiles.local.nu
 source ~/.local.nu

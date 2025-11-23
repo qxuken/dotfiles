@@ -1,0 +1,9 @@
+[init]
+    defaultbranch = main
+
+[merge]
+    conflictstyle = zdiff3
+
+[user]
+    name = Nasonov Viktor
+    email = me@qxuken.dev

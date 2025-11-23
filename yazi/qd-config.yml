@@ -31,4 +31,4 @@ win:
     - yazi
     - config
 dotfile_source:
-  - ["%path%", yazi.nu]
+  - ["%path%", config.nu]

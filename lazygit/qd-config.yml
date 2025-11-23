@@ -17,3 +17,5 @@ win:
     - lazygit
 ignore:
   - "**/state.yml"
+dotfile_source:
+  - ["%path%", config.nu]

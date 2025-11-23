@@ -30,4 +30,6 @@ win:
     - "%local-appdata%"
     - nvim
 dotfile_env_source:
-  - ["%path%", neovim-env.nu]
+  - ["%path%", env.nu]
+dotfile_source:
+  - ["%path%", config.nu]
