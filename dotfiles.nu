@@ -12,7 +12,7 @@ def make-tmp-file []: nothing -> path {
   touch $file
   $file
 }
-def cleanup-tmp [] { rm $tmp_path }
+def cleanup-tmp [] { rm -r $tmp_path }
 
 const known_hosts  = [posix darwin ubuntu win windows]
 const host_aliases = {darwin: posix, ubuntu: posix, windows: win}
