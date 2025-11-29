@@ -44,6 +44,11 @@ return {
           cloak_pattern = ':.+',
           replace = nil,
         },
+        {
+          file_pattern = '*.key',
+          cloak_pattern = '-KEY.+',
+          replace = nil,
+        },
       },
     },
   },
