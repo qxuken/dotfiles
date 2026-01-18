@@ -24,19 +24,45 @@ local fira_features = {
 local fira_font = {
   family = "FiraMono Nerd Font",
   harfbuzz_features = fira_features,
-  weight = "Medium",
 }
 
+local intel_one_features = {
+  "ss01", -- Programming ligatures
+  -- "ss02", -- Arrow forms for less/equal and greater/equal combinations
+  -- "ss03", -- www ligature
+  "ss11", -- Raised colon (contextual with figures)
+  -- "ss12", -- Raised colon (global)
+  -- "salt", -- Raised colon (global)
+  "locl", -- Localizations
+  "ccmp", -- Glyph composition/decomposition rules
+  -- "mark", -- Mark Attachment
+  -- "numr", -- Numerator
+  -- "dnom", -- Denominator
+  -- "sups", -- Superscript
+  -- "subs", -- Subscript
+  -- "sinf", -- Scientific inferior
+  "aalt", -- Access all alternates
+}
+local intel_one_font = {
+  family = "Intel One Mono",
+  harfbuzz_features = intel_one_features,
+}
+
+---@diagnostic disable-next-line: unused-local
 local berkeley_font = {
   family = "Berkeley Mono Variable",
-  -- weight = "DemiBold",
 }
 
 local config = {
-  darkTheme = "Catppuccin Mocha (Gogh)",
-  lightTheme = "Catppuccin Latte (Gogh)",
-  font_size = 18.5,
-  font_family = berkeley_font,
+  dark_theme = "Ayu Dark (Gogh)",
+  light_theme = "Ayu Light (Gogh)",
+  line_height = 1.1,
+  font_size = 15,
+  font_order = {
+    intel_one_font,
+    fira_font,
+    berkeley_font,
+  },
 }
 
 local M = {}
@@ -50,9 +76,9 @@ end
 
 M.scheme_for_appearance = function()
   if M.get_appearance():find("Dark") then
-    return config.darkTheme
+    return config.dark_theme
   else
-    return config.lightTheme
+    return config.light_theme
   end
 end
 
@@ -70,12 +96,9 @@ M.apply_to_config = function(c)
   c.colors = wezterm.color.get_builtin_schemes()[theme]
 
   c.font_dirs = { "fonts" }
-  c.font = wezterm.font_with_fallback({
-    config.font_family,
-    berkeley_font,
-    fira_font,
-  })
+  c.font = wezterm.font_with_fallback(config.font_order)
 
+  c.line_height = config.line_height
   c.font_size = config.font_size
   c.command_palette_font_size = 22.0
   c.command_palette_bg_color = c.colors.background

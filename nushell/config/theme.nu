@@ -1,7 +1,6 @@
-use ../themes/catppuccin-latte.nu
-use ../themes/catppuccin-mocha.nu
-use ../themes/catppuccin-latte-ls.nu
-use ../themes/catppuccin-mocha-ls.nu
+use ../themes/ayu.nu
+use ../themes/ayu-light.nu
+use ../themes/ayu-ls.nu
 
 # https://github.com/nushell/nu_scripts/tree/main/themes
 
@@ -30,12 +29,12 @@ export def --env reload-theme [] {
 
     if $is_dark {
         $env.TERM_APEARANCE = "Dark"
-        $env.config.color_config = catppuccin-mocha
-        $env.LS_COLORS = $catppuccin_mocha_ls.colors
+        $env.config.color_config = ayu
+        $env.LS_COLORS = $ayu_ls.colors
     } else {
         $env.TERM_APEARANCE = "Light"
-        $env.config.color_config = catppuccin-latte
-        $env.LS_COLORS = $catppuccin_latte_ls.colors
+        $env.config.color_config = ayu-light
+        $env.LS_COLORS = $ayu_ls.colors
     }
 }
 export alias rt = reload-theme
