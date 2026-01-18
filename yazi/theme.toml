@@ -1,5 +1,6 @@
+# https://github.com/yazi-rs/flavors
 [flavor]
-dark = "catppuccin-mocha"
+dark = "ayu-dark"
 light = "catppuccin-latte"
 
 [status]

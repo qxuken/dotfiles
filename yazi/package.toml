@@ -37,3 +37,8 @@ hash = "d4c41d713b325710a9dd5ae86c3f8a5f"
 use = "yazi-rs/flavors:catppuccin-latte"
 rev = "2d73b79"
 hash = "9e789c612c34f941a2afd42e7ded39f"
+
+[[flavor.deps]]
+use = "kmlupreti/ayu-dark"
+rev = "648a178"
+hash = "e44c5be01a85744a896a757a7538b14a"

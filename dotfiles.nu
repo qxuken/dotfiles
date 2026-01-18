@@ -293,7 +293,7 @@ export def push [
       cp --force $out $to
       rm $out
     } else {
-      cp --update $from $to
+      cp --force $from $to
     }
   }
   $config.files | each {|it| cp --update $it.src $it.dest}

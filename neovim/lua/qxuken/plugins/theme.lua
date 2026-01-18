@@ -4,40 +4,16 @@ return {
     opts = true,
   },
   {
-    'catppuccin/nvim',
-    name = 'catppuccin',
+    'Shatur/neovim-ayu',
+    name = 'ayu',
     priority = 1000,
     config = function()
-      require('catppuccin').setup {
-        transparent_background = false,
-        show_end_of_buffer = true,
-        integrations = {
-          blink_cmp = true,
-          diffview = true,
-          fidget = true,
-          harpoon = true,
-          mason = true,
-          neotest = true,
-          notify = true,
-          snacks = {
-            enabled = true,
-          },
-          which_key = true,
-          render_markdown = true,
-        },
-        custom_highlights = function(colors)
-          return {
-            FloatBorder = { bg = colors.mantle, fg = colors.blue },
-            NormalFloat = { bg = colors.mantle },
-            BlinkCmpMenu = { bg = colors.mantle },
-            BlinkCmpMenuBorder = { bg = colors.mantle, fg = colors.blue },
-            BlinkCmpDoc = { bg = colors.mantle, fg = colors.blue },
-            BlinkCmpDocBorder = { bg = colors.mantle, fg = colors.blue },
-            BlinkCmpDocSeparator = { bg = colors.mantle, fg = colors.lavender },
-          }
-        end,
+      require('ayu').setup {
+        mirage = false, -- Set to `true` to use `mirage` variant instead of `dark` for dark background.
+        terminal = false, -- Set to `false` to let terminal manage its own colors.
+        overrides = {},
       }
-      vim.cmd 'colorscheme catppuccin'
+      require('ayu').colorscheme()
     end,
   },
 }
