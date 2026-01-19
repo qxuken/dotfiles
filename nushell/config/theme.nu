@@ -1,5 +1,5 @@
 use ../themes/ayu.nu
-use ../themes/ayu-light.nu
+use ../themes/atom-one-light.nu
 use ../themes/ayu-ls.nu
 
 # https://github.com/nushell/nu_scripts/tree/main/themes
@@ -33,7 +33,7 @@ export def --env reload-theme [] {
         $env.LS_COLORS = $ayu_ls.colors
     } else {
         $env.TERM_APEARANCE = "Light"
-        $env.config.color_config = ayu-light
+        $env.config.color_config = atom-one-light
         $env.LS_COLORS = $ayu_ls.colors
     }
 }
