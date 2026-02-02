@@ -8,7 +8,7 @@ def is-dark [] {
     if ("WSL_DISTRO_NAME" in $env) or ($env.HOST_OS_NAME == "Windows") {
         return true
     }
-    let terminator = if ($env.HOST_OS_NAME == 'Darwin' and (("WEZTERM_UNIX_SOCKET" in $env) or ("ITERM_PROFILE" in $env) or ("GHOSTTY_BIN_DIR" in $env))) or $env.HOST_OS_NAME == "Linux" or ("ZED_TERM" in $env) {
+    let terminator = if ($env.HOST_OS_NAME == 'Darwin' and (("WEZTERM_UNIX_SOCKET" in $env) or ("ITERM_PROFILE" in $env) or ("GHOSTTY_BIN_DIR" in $env))) or $env.HOST_OS_NAME == "Linux" or ("ZED_TERM" in $env) or ("VSCODE_NONCE" in $env) {
         ansi st
     } else {
         char bel
