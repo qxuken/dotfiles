@@ -275,7 +275,7 @@ export def push [
   if $sync_with_remote {
     remote-pull
   }
-  let config = config-file-path $config_name | load-configwave
+  let config = config-file-path $config_name | load-config
   let is_first_push = not ($config | config-dest | path exists)
   let pre_init_script_path = $config | config-dest | path join qd-pre-init.nu
   if $is_first_push and ($pre_init_script_path | path exists) {
