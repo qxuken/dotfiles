@@ -54,8 +54,8 @@ local berkeley_font = {
 }
 
 local config = {
-  dark_theme = "Ayu Dark (Gogh)",
-  light_theme = "Ayu Light (Gogh)",
+  dark_theme = require("config.coloschemes.kanagawa-dragon"),
+  light_theme = require("config.coloschemes.kanagawa-lotus"),
   line_height = 1.1,
   font_size = 15,
   font_order = {
@@ -67,15 +67,21 @@ local config = {
 
 local M = {}
 
+M.theme = {
+  light = 0,
+  dark = 1,
+}
+
 M.get_appearance = function()
-  if wezterm.gui then
-    return wezterm.gui.get_appearance() == "Light" and "Light" or "Dark"
+  if wezterm.gui and wezterm.gui.get_appearance() == "Light" then
+    return M.theme.light
+  else
+    return M.theme.dark
   end
-  return "Dark"
 end
 
 M.scheme_for_appearance = function()
-  if M.get_appearance():find("Dark") then
+  if M.get_appearance() == M.theme.dark then
     return config.dark_theme
   else
     return config.light_theme
@@ -87,13 +93,17 @@ M.apply_to_config = function(c)
   c.window_padding = { left = 0, right = 0, top = 0, bottom = 0 }
   c.enable_scroll_bar = false
 
-  -- nightly only for now
-  -- c.native_macos_fullscreen_mode = false
-  -- c.macos_fullscreen_extend_behind_notch = true
+  c.prefer_to_spawn_tabs = true
 
   local theme = M.scheme_for_appearance()
-  c.color_scheme = theme
-  c.colors = wezterm.color.get_builtin_schemes()[theme]
+  if type(theme) == "string" then
+    c.color_scheme = theme
+    c.colors = wezterm.color.get_builtin_schemes()[theme]
+  elseif type(theme) == "table" then
+    for k, v in pairs(theme) do
+      c[k] = v
+    end
+  end
 
   c.font_dirs = { "fonts" }
   c.font = wezterm.font_with_fallback(config.font_order)

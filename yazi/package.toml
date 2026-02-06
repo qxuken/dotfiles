@@ -19,19 +19,9 @@ rev = "9a52857"
 hash = "8ad3e90b079190b4905f24a44f4ca06b"
 
 [[plugin.deps]]
-use = "yazi-rs/plugins:smart-filter"
-rev = "9a52857"
-hash = "bcda8eeb3f4013bae156aecabfc745e8"
-
-[[plugin.deps]]
 use = "yazi-rs/plugins:git"
 rev = "9a52857"
 hash = "63b6c222bf2103b3023389dde5e2ecfe"
-
-[[flavor.deps]]
-use = "yazi-rs/flavors:catppuccin-mocha"
-rev = "2d73b79"
-hash = "d4c41d713b325710a9dd5ae86c3f8a5f"
 
 [[flavor.deps]]
 use = "yazi-rs/flavors:catppuccin-latte"
@@ -39,6 +29,6 @@ rev = "2d73b79"
 hash = "9e789c612c34f941a2afd42e7ded39f"
 
 [[flavor.deps]]
-use = "kmlupreti/ayu-dark"
-rev = "648a178"
-hash = "e44c5be01a85744a896a757a7538b14a"
+use = "dangooddd/kanagawa"
+rev = "04985d1"
+hash = "c69a63981e254a3a06a11c2bf0e6af1d"
