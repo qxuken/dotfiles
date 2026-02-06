@@ -1,6 +1,6 @@
 # https://github.com/yazi-rs/flavors
 [flavor]
-dark = "ayu-dark"
+dark = "kanagawa"
 light = "catppuccin-latte"
 
 [status]

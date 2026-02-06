@@ -11,6 +11,10 @@ M.apply_to_config = function(c)
 
   c.max_fps = 240
   c.animation_fps = 240
+
+  -- nightly only for now
+  c.native_macos_fullscreen_mode = false
+  c.macos_fullscreen_extend_behind_notch = true
 end
 
 return M
