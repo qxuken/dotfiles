@@ -1,8 +1,9 @@
 if: ["!wsl"]
 brew:
-  - wezterm
+  - wezterm@nightly
 scoop:
-  - wezterm
+  - name: wezterm-nightly
+    bucket: versions
 path:
   - "%config%"
   - wezterm
