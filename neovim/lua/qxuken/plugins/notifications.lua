@@ -6,8 +6,9 @@ return {
       {
         'rcarriga/nvim-notify',
         config = function()
-          require('notify').setup { render = 'minimal', fps = 144 }
-          vim.notify = require 'notify'
+          local notify = require 'notify'
+          notify.setup { render = 'minimal', fps = 144 }
+          vim.notify = notify
         end,
       },
     },
