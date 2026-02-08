@@ -54,14 +54,14 @@ local berkeley_font = {
 }
 
 local config = {
-  dark_theme = require("config.coloschemes.kanagawa-dragon"),
-  light_theme = require("config.coloschemes.kanagawa-lotus"),
+  dark_theme = "GruvboxDark",
+  light_theme = "GruvboxLight",
   line_height = 1.1,
   font_size = 15,
   font_order = {
     intel_one_font,
-    fira_font,
     berkeley_font,
+    fira_font,
   },
 }
 

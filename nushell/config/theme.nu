@@ -1,7 +1,7 @@
-use ../themes/kanagawa-lotus.nu
-use ../themes/kanagawa-lotus-ls.nu
-use ../themes/kanagawa-dragon.nu
-use ../themes/kanagawa-dragon-ls.nu
+use ../themes/gruvbox-light-medium.nu
+use ../themes/gruvbox-light-ls.nu
+use ../themes/gruvbox-dark.nu
+use ../themes/gruvbox-dark-ls.nu
 
 # https://github.com/nushell/nu_scripts/tree/main/themes
 
@@ -30,12 +30,12 @@ export def --env reload-theme [] {
 
   if $is_dark {
     $env.TERM_APEARANCE = "Dark"
-    $env.config.color_config = kanagawa-dragon
-    $env.LS_COLORS = $kanagawa_dragon_ls.colors
+    $env.config.color_config = gruvbox-dark
+    $env.LS_COLORS = $gruvbox_dark_ls.colors
   } else {
     $env.TERM_APEARANCE = "Light"
-    $env.config.color_config = kanagawa-lotus
-    $env.LS_COLORS = $kanagawa_lotus_ls.colors
+    $env.config.color_config = gruvbox-light-medium
+    $env.LS_COLORS = $gruvbox_light_ls.colors
   }
 }
 export alias rt = reload-theme
