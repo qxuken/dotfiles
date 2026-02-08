@@ -4,35 +4,33 @@ return {
     opts = true,
   },
   {
-    'rebelot/kanagawa.nvim',
-    name = 'kanagawa',
+    'ellisonleao/gruvbox.nvim',
     priority = 1000,
     config = function()
-      require('kanagawa').setup {
-        compile = true,
+      require('gruvbox').setup {
+        terminal_colors = true, -- add neovim terminal colors
         undercurl = true,
-        commentStyle = { italic = false },
-        -- functionStyle = {},
-        keywordStyle = { italic = true },
-        statementStyle = { bold = false },
-        -- typeStyle = {},
-        transparent = false, -- do not set background color
-        dimInactive = true, -- dim inactive window `:h hl-NormalNC`
-        -- terminalColors = true, -- define vim.g.terminal_color_{0,17}
-        -- colors = { -- add/modify theme and palette colors
-        --   palette = {},
-        --   theme = { wave = {}, lotus = {}, dragon = {}, all = {} },
-        -- },
-        -- overrides = function(colors) -- add/modify highlights
-        --   return {}
-        -- end,
-        -- theme = 'wave', -- Load "wave" theme
-        background = { -- map the value of 'background' option to a theme
-          dark = 'dragon', -- "dragon" | "wave"
-          light = 'lotus',
+        underline = true,
+        bold = false,
+        italic = {
+          strings = false,
+          emphasis = false,
+          comments = false,
+          operators = false,
+          folds = true,
         },
+        strikethrough = true,
+        invert_selection = false,
+        invert_signs = false,
+        invert_tabline = false,
+        inverse = true, -- invert background for search, diffs, statuslines and errors
+        contrast = '', -- can be "hard", "soft" or empty string
+        palette_overrides = {},
+        overrides = {},
+        dim_inactive = false,
+        transparent_mode = false,
       }
-      vim.cmd 'colorscheme kanagawa'
+      vim.cmd 'colorscheme gruvbox'
     end,
   },
 }
