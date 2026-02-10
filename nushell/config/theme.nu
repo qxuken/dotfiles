@@ -6,7 +6,7 @@ use ../themes/gruvbox-dark-ls.nu
 # https://github.com/nushell/nu_scripts/tree/main/themes
 
 def is-dark [] {
-  if ("WSL_DISTRO_NAME" in $env) or ($env.HOST_OS_NAME == "Windows") {
+  if (not (is-terminal --stdin) or "WSL_DISTRO_NAME" in $env) or ($env.HOST_OS_NAME == "Windows") {
     return true
   }
   let terminator = if ($env.HOST_OS_NAME == 'Darwin' and (("WEZTERM_UNIX_SOCKET" in $env) or ("ITERM_PROFILE" in $env) or ("GHOSTTY_BIN_DIR" in $env))) or $env.HOST_OS_NAME == "Linux" or ("ZED_TERM" in $env) or ("VSCODE_NONCE" in $env) {
