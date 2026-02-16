@@ -33,15 +33,15 @@ if $env.HOST_OS_NAME != "Windows" {
     | split row (char esep)
     | prepend (
       [
+        ($env.HOME | path join bin)
+        ($env.HOME | path join .local bin)
+        ($env.HOME | path join .cargo bin)
+        ($env.HOME | path join go bin)
         ("/" | path join usr local bin)
         ("/" | path join opt homebrew bin)
         ("/" | path join opt homebrew opt ruby bin)
         ("/" | path join home linuxbrew .linuxbrew bin)
         ("/" | path join home linuxbrew .linuxbrew opt ruby bin)
-        ($env.HOME | path join bin)
-        ($env.HOME | path join .local bin)
-        ($env.HOME | path join .cargo bin)
-        ($env.HOME | path join go bin)
       ]
       | where (path exists)
     )
