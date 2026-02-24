@@ -32,3 +32,7 @@ export def netherlands [] {
 export def germany [] {
   connect germany
 }
+
+export def stockholm [] {
+  connect stockholm
+}
