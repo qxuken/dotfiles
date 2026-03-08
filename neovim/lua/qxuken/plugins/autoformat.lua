@@ -38,6 +38,8 @@ return {
         css = { 'prettierd', 'prettier' },
         templ = { 'templ' },
         sql = { 'sqlfmt', stop_after_first = true },
+        c = { 'clang-format' },
+        h = { 'clang-format' },
       },
     },
     init = function()

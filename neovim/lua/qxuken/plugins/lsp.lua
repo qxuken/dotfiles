@@ -113,6 +113,7 @@ return {
         sqlls = {},
         sqlfmt = {},
         clangd = {},
+        ['clang-format'] = {},
         goimports = {},
         gopls = {},
         templ = {},
