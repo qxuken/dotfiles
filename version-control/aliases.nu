@@ -14,7 +14,7 @@ export alias fbn = fossil branch new            # Create new branch
 export def fb [] { fossil diff | bat }          # Pipe output of a diff to bat
 export def fn [] { fossil diff | nvim }         # Pipe output of a diff to neovim
 # Initialize new fossil repo
-export def fi [repo: cell-path = ./repo.fossil] {
+export def fi [repo: cell-path = repo.fossil] {
     fossil new $repo
     fossil open -f -k $repo
 }
