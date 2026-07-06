@@ -83,7 +83,7 @@ def get-configs   []: nothing -> list<path> {
 # - scoop: list<string | { name: string, bucket: string } | {"%root%": ...}>
 # - <host> / <host-alias>: same structure for host-specific overrides
 def load-config []: path -> record {
-  let host = sys-host-name
+  let host = (sys-host-name)
   let host_alias = (
     $host_aliases
     | get -o --ignore-case $host
