@@ -174,7 +174,7 @@ export def compile-home-dotfile [] {
 
 def syncable-configs []: nothing -> list<string> { load-configs | where ($it | config-dest | is-not-empty) | get name }
 def path-strip [strip_path: path]: list<path> -> list<path> { each {path relative-to $strip_path} }
-def files [--ignore: list<glob> = [], --encrypt: list<glob> = []]: path -> list<record> {
+def files [--ignore: list<string> = [], --encrypt: list<glob> = []]: path -> list<record> {
   let input = $in
   if ($input | is-empty) {
     error make {msg: "No path provided", help: "Config is missing path", label: {
