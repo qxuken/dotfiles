@@ -183,7 +183,7 @@ export const keybinds = [
         event: { edit: movetolinestart }
     }
     {
-        name: move_to_line_start
+        name: move_to_line_start_ctrl_a
         modifier: control
         keycode: char_a
         mode: [emacs, vi_normal, vi_insert]
@@ -202,7 +202,7 @@ export const keybinds = [
         }
     }
     {
-        name: move_to_line_end_or_take_history_hint
+        name: move_to_line_end_or_take_history_hint_ctrl_e
         modifier: control
         keycode: char_e
         mode: [emacs, vi_normal, vi_insert]
@@ -214,7 +214,7 @@ export const keybinds = [
         }
     }
     {
-        name: move_to_line_start
+        name: move_to_line_start_ctrl_home
         modifier: control
         keycode: home
         mode: [emacs, vi_normal, vi_insert]
@@ -228,7 +228,7 @@ export const keybinds = [
         event: { edit: movetolineend }
     }
     {
-        name: move_down
+        name: move_down_ctrl_n
         modifier: control
         keycode: char_n
         mode: [emacs, vi_normal, vi_insert]
@@ -240,7 +240,7 @@ export const keybinds = [
         }
     }
     {
-        name: move_up
+        name: move_up_ctrl_p
         modifier: control
         keycode: char_p
         mode: [emacs, vi_normal, vi_insert]
@@ -273,28 +273,28 @@ export const keybinds = [
         event: { edit: delete }
     }
     {
-        name: delete_one_character_forward
+        name: delete_one_character_forward_ctrl_delete
         modifier: control
         keycode: delete
         mode: [emacs, vi_insert]
         event: { edit: delete }
     }
     {
-        name: delete_one_character_backward
+        name: delete_one_character_backward_ctrl_h
         modifier: control
         keycode: char_h
         mode: [emacs, vi_insert]
         event: { edit: backspace }
     }
     {
-        name: delete_one_word_backward
+        name: delete_one_word_backward_ctrl_w
         modifier: control
         keycode: char_w
         mode: [emacs, vi_insert]
         event: { edit: backspaceword }
     }
     {
-        name: move_left
+        name: move_left_vi_backspace
         modifier: none
         keycode: backspace
         mode: vi_normal
@@ -308,7 +308,7 @@ export const keybinds = [
         event: { send: enter }
     }
     {
-        name: move_left
+        name: move_left_ctrl_b
         modifier: control
         keycode: char_b
         mode: emacs
@@ -320,7 +320,7 @@ export const keybinds = [
         }
     }
     {
-        name: move_right_or_take_history_hint
+        name: move_right_or_take_history_hint_ctrl_f
         modifier: control
         keycode: char_f
         mode: emacs
@@ -382,14 +382,14 @@ export const keybinds = [
         event: { edit: swapgraphemes }
     }
     {
-        name: move_one_word_left
+        name: move_one_word_left_alt_left
         modifier: alt
         keycode: left
         mode: emacs
         event: { edit: movewordleft }
     }
     {
-        name: move_one_word_right_or_take_history_hint
+        name: move_one_word_right_or_take_history_hint_alt_right
         modifier: alt
         keycode: right
         mode: emacs
@@ -401,14 +401,14 @@ export const keybinds = [
         }
     }
     {
-        name: move_one_word_left
+        name: move_one_word_left_alt_b
         modifier: alt
         keycode: char_b
         mode: emacs
         event: { edit: movewordleft }
     }
     {
-        name: move_one_word_right_or_take_history_hint
+        name: move_one_word_right_or_take_history_hint_alt_f
         modifier: alt
         keycode: char_f
         mode: emacs
@@ -427,14 +427,14 @@ export const keybinds = [
         event: { edit: deleteword }
     }
     {
-        name: delete_one_word_backward
+        name: delete_one_word_backward_alt_backspace
         modifier: alt
         keycode: backspace
         mode: emacs
         event: { edit: backspaceword }
     }
     {
-        name: delete_one_word_backward
+        name: delete_one_word_backward_alt_m
         modifier: alt
         keycode: char_m
         mode: emacs
@@ -482,7 +482,7 @@ export const keybinds = [
         # event: { edit: copyselectionsystem }
     }
     {
-        name: copy_selection
+        name: copy_selection_vi_y
         modifier: none
         keycode: char_y
         mode: vi_normal
