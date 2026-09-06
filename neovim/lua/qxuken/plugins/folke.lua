@@ -285,5 +285,5 @@ return {
     end,
   },
   'folke/lazydev.nvim',
-  'folke/neoconf.nvim',
+  { 'folke/neoconf.nvim', config = true },
 }

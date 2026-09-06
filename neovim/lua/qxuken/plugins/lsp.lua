@@ -10,12 +10,7 @@ return {
       'j-hui/fidget.nvim',
       'saghen/blink.cmp',
       'folke/snacks.nvim',
-      {
-        'ray-x/lsp_signature.nvim',
-        event = 'InsertEnter',
-        opts = {},
-      },
-      { 'folke/neoconf.nvim', config = true },
+      { 'ray-x/lsp_signature.nvim', event = 'InsertEnter', opts = {} },
       { 'folke/lazydev.nvim', ft = 'lua', opts = {} },
     },
     keys = {
