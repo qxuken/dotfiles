@@ -14,3 +14,5 @@ display-inlay-hints = false
 
 [editor.file-picker]
 hidden = false
+
+# qd round-trip check
