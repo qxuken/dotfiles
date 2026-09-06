@@ -1,6 +1,10 @@
 # Nushell integration for qd. `use` this file from your config.
 #
 #   use ~/dotfiles/qd.nu *
+#
+# Vendored from the qd repo's contrib/qd.nu. The root qd.lua puts it in
+# `nushell.source`, not `nushell.include`: the compiler emits `use` without the
+# glob, which would namespace the aliases as `qd dph` and collide with the binary.
 
 def "nu-complete qd modules" [] { ^qd __complete modules | lines }
 def "nu-complete qd all-modules" [] { ^qd __complete all-modules | lines }
