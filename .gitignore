@@ -2,3 +2,4 @@ master.key
 repo.fossil
 .fslckout
 .mirror_state
+**/.DS_Store
