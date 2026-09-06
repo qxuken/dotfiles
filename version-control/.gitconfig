@@ -7,15 +7,8 @@
 [user]
     name = Nasonov Viktor
     email = me@qxuken.dev
-[filter "lfs"]
-	clean = git-lfs clean -- %f
-	smudge = git-lfs smudge -- %f
-	process = git-lfs filter-process
-	required = true
-[credential "https://drydock9.qxuken.dev"]
-	provider = generic
-[credential]
-	helper = 
-	helper = /usr/local/share/gcm-core/git-credential-manager
-[credential "https://dev.azure.com"]
-	useHttpPath = true
+
+# Last, so a machine can override anything above. Silently skipped when absent,
+# so this line is safe on a machine that has no local config of its own.
+[include]
+    path = ~/.gitconfig.local
