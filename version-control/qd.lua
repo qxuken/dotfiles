@@ -5,7 +5,7 @@ return {
   brew  = { "git", "fossil" },
   scoop = { "git", "fossil" },
   files = {
-    { src = ".gitconfig", dest = qd.path.home(".gitconfig"), enabled = not qd.tag("work") },
+    { src = ".gitconfig", dest = qd.path.home(".gitconfig") },
   },
   nushell = { source = { "config.nu" } },
 }
