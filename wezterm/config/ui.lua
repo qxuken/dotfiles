@@ -95,6 +95,13 @@ M.apply_to_config = function(c)
 
   c.prefer_to_spawn_tabs = true
 
+  local appearance = M.get_appearance()
+  -- Hand the appearance to shells so nushell can pick a theme without an
+  -- OSC 11 round trip. WezTerm reloads config on appearance change, so new
+  -- panes always see the current value.
+  c.set_environment_variables = c.set_environment_variables or {}
+  c.set_environment_variables.TERM_APEARANCE = appearance == M.theme.dark and "Dark" or "Light"
+
   local theme = M.scheme_for_appearance()
   if type(theme) == "string" then
     c.color_scheme = theme
