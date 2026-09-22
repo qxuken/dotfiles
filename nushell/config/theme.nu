@@ -31,11 +31,13 @@ def query-is-dark []: nothing -> bool {
   $brightness < 128
 }
 
-# Work out the appearance without touching the tty. Cheapest source first.
+# Work out the appearance without touching the tty. Cheapest source first:
+# what the terminal handed down — kawoosh's TERM_APPEARANCE (dark|light),
+# wezterm's TERM_APEARANCE (Dark|Light) — then the OS.
 def detect-is-dark []: nothing -> bool {
-  let handed_down = $env.TERM_APEARANCE? | default ""
-  if $handed_down in ["Dark" "Light"] {
-    return ($handed_down == "Dark")
+  let handed_down = $env.TERM_APPEARANCE? | default ($env.TERM_APEARANCE? | default "") | str lowercase
+  if $handed_down in ["dark" "light"] {
+    return ($handed_down == "dark")
   }
   if "WSL_DISTRO_NAME" in $env {
     return true
@@ -58,12 +60,28 @@ def detect-is-dark []: nothing -> bool {
 def --env apply-theme [is_dark: bool] {
   if $is_dark {
     $env.TERM_APEARANCE = "Dark"
+    $env.TERM_APPEARANCE = "dark"
     $env.config.color_config = gruvbox-dark
     $env.LS_COLORS = $gruvbox_dark_ls.colors
   } else {
     $env.TERM_APEARANCE = "Light"
+    $env.TERM_APPEARANCE = "light"
     $env.config.color_config = gruvbox-light-medium
     $env.LS_COLORS = $gruvbox_light_ls.colors
+  }
+}
+
+# Inside kawoosh the appearance can flip under a running shell, and an env
+# var cannot follow. `kawoosh theme` asks the instance over its socket
+# (no tty round trip, so typeahead cannot break it); the prompt hook below
+# runs it before each prompt and re-applies the theme when the answer moved.
+def --env kawoosh-follow-theme [] {
+  let bin = $env.KAWOOSH_BIN? | default "kawoosh"
+  let answer = try { ^$bin theme | complete } catch { return }
+  if $answer.exit_code != 0 { return }
+  let now = $answer.stdout | str trim
+  if $now in ["dark" "light"] and $now != ($env.TERM_APPEARANCE? | default "") {
+    apply-theme ($now == "dark")
   }
 }
 
@@ -81,3 +99,10 @@ export def --env reload-theme [--no-query (-n)] {
 export alias rt = reload-theme
 
 apply-theme (try { detect-is-dark } catch { true })
+
+# A string hook keeps the env changes it makes; a closure would not.
+if "KAWOOSH_SOCKET" in $env {
+  $env.config.hooks.pre_prompt = (
+    $env.config.hooks.pre_prompt | default [] | append { code: "kawoosh-follow-theme" }
+  )
+}
