@@ -4,4 +4,6 @@ gui:
   theme:
     selectedLineBgColor:
       - '#1a4759'
+  lightTheme:
+    selectedLineBgColor:
       - '#dcd5ac'
