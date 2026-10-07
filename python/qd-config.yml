@@ -1,9 +1,0 @@
-brew:
-  - uv
-scoop:
-  - uv
-path:
-  - "%dotfiles-cache%"
-  - python
-dotfile_source:
-  - ["%path%", "config.nu"]
