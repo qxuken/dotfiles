@@ -8,7 +8,7 @@ return {
   scoop = { "mise" },
   nushell = { source = { "config.nu" }, env_source = { "env.nu" } },
   setup = {
-    version = 1,
+    version = 2,
     after = function(m) qd.run("mise", "install") end,
   },
 }

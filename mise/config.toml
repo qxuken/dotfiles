@@ -1,5 +1,7 @@
 [tools]
 node = "26"
+zig = "0.17"
+java = "temurin-25"
 
 [settings]
 # pick up .nvmrc / .node-version, not only mise.toml
