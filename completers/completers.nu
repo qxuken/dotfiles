@@ -1,19 +1,24 @@
-# https://www.nushell.sh/cookbook/external_completers.html#alias-completions
+# https://www.nushell.sh/cookbook/external_completers.html
+#
+# Completer input is `$place.command`: the token list of the command under the
+# cursor (after pipes, inside closures, after `;`), with aliases already expanded.
 export def external_completer [] {
-    let zoxide_completer = {|spans|
-        $spans | skip 1 | zoxide query -l ...$in | lines | where {|x| $x != $env.PWD}
-    }
-
     let carapace_completer = {|spans: list<string>|
         carapace $spans.0 nushell ...$spans
         | from json
-        | if ($in | default [] | where value =~ '^-.*ERR$' | is-empty) { $in } else { null }
+        | default []
+        # on error carapace yields an `ERR` row; return null to fall back to file completion
+        | if ($in | any {|row| $row.value == "ERR" }) { null } else { $in }
     }
 
-    let fish_completer = {|spans|
-        fish --command $'complete "--do-complete=($spans | str join " ")"'
-        | from tsv --flexible --noheaders --no-infer
-        | rename value description
+    let fish_completer = {|spans: list<string>|
+        # pass the line as an argument, never interpolate it into fish source
+        fish --command 'complete --do-complete=$argv[1]' -- ($spans | str join " ")
+        | lines
+        | each {|line|
+            let parts = $line | split row (char tab)
+            {value: $parts.0, description: ($parts.1? | default "")}
+        }
     }
 
     let main_completer = if $env.HOST_OS_NAME != "Windows" {
@@ -22,32 +27,17 @@ export def external_completer [] {
         $carapace_completer
     }
 
-    return {|spans|
-        let expanded_alias = scope aliases
-        | where name == $spans.0
-        | get -o 0.expansion
-        let spans = if $expanded_alias != null {
-            $spans
-            | skip 1
-            | prepend ($expanded_alias | split row ' ' | take 1)
-        } else {
-            $spans
-        }
+    return {|place|
+        let spans = $place.command
 
         match $spans.0 {
-            # carapace completions are incorrect for nu
-            nu                       => $main_completer
             # fish completes commits and branch names in a nicer way
             git                      => $main_completer
             brew                     => $main_completer
             node                     => $main_completer
             deno                     => $main_completer
-            bun                      => $main_completer
-            yarn                     => $main_completer
-            # carapace doesn't have completions for asdf
-            asdf                     => $main_completer
-            # use zoxide completions for zoxide commands
-            __zoxide_z | __zoxide_zi => $zoxide_completer
+            # carapace doesn't have completions for mise
+            mise                     => $main_completer
             _                        => $carapace_completer
         } | do $in $spans
     }
