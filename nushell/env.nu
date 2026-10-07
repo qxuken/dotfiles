@@ -57,7 +57,7 @@ if $env.HOST_OS_NAME != "Windows" {
   }
 
   if (which gem | is-not-empty) {
-    path add (gem environment gemdir)
+    path add (gem environment gemdir | path join bin)
   }
 }
 
