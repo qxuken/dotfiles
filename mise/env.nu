@@ -6,5 +6,9 @@ mkdir ($mise_nu | path dirname)
 if (which mise | is-empty) {
   "" | save -f $mise_nu
 } else {
-  ^mise activate nu | save -f $mise_nu
+  # The `mise` wrapper is a nu command, so tab completion would stop at its own
+  # signature; send it to the external completer (fish) like the bare binary.
+  ^mise activate nu
+  | str replace "export def --env --wrapped main" "@complete external\nexport def --env --wrapped main"
+  | save -f $mise_nu
 }
