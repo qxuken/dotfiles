@@ -1,8 +1,11 @@
 [tools]
 node = "26"
+python = "3.14"
 zig = "0.17"
 java = "temurin-25"
 
 [settings]
 # pick up .nvmrc / .node-version, not only mise.toml
 idiomatic_version_file_enable_tools = ["node"]
+# in a uv project (uv.lock), put its .venv first; uv sync still creates it
+python.uv_venv_auto = "source"
