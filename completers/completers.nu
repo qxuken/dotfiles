@@ -27,8 +27,13 @@ export def external_completer [] {
         $carapace_completer
     }
 
-    return {|place|
-        let spans = $place.command
+    return {|place, buffer|
+        mut spans = $place.command
+        # A module's `main` (the mise wrapper) arrives under its def name, not the
+        # name it was imported as; recover the typed head from the line.
+        if $spans.0 == "main" {
+            $spans = $spans | update 0 ($buffer | split row " " | last ($spans | length) | first)
+        }
 
         match $spans.0 {
             # fish completes commits and branch names in a nicer way
