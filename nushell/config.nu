@@ -3,9 +3,6 @@
 # Only overrides live here; everything else is Nushell's built-in default.
 # See `config nu --doc` for every option and its default.
 
-use ./config/keybinds.nu [keybinds]
-use ./config/menus.nu [menus]
-
 $env.config.show_banner = false
 $env.config.edit_mode = 'vi'
 $env.config.use_kitty_protocol = true # keyboard enhancement protocol, only where the terminal supports it
@@ -28,10 +25,8 @@ $env.config.hooks.env_change.PWD = [{|before, after|
     }
 }]
 
-$env.config.menus = $menus
-$env.config.keybindings = $keybinds
-
 use ./config/aliases.nu *
+use ./config/plugins.nu *
 source ./config/theme.nu
 
 source ~/.dotfiles.local.nu
