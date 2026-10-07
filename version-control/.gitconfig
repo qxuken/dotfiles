@@ -12,3 +12,5 @@
 # so this line is safe on a machine that has no local config of its own.
 [include]
     path = ~/.gitconfig.local
+[core]
+	editor = kawoosh-edit
