@@ -1,34 +1,39 @@
 [[plugin.deps]]
 use = "yazi-rs/plugins:full-border"
-rev = "9a52857"
-hash = "3996fc74044bc44144b323686f887e1"
+rev = "6229767"
+hash = "f281261ff04ad7ec867c3f802a50835f"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:smart-enter"
-rev = "9a52857"
-hash = "56fdabc96fc1f4d53c96eb884b02a5be"
+rev = "6229767"
+hash = "187cc58ba7ac3befd49c342129e6f1b6"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:mount"
-rev = "9a52857"
-hash = "4fccaaf10c36dc2466e2438a386ff017"
+rev = "6229767"
+hash = "b95f898e6dc60b52edbc415952e14395"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:chmod"
-rev = "9a52857"
-hash = "8ad3e90b079190b4905f24a44f4ca06b"
+rev = "6229767"
+hash = "87472b05a8c420100f6a2b9cde1e7746"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:git"
-rev = "9a52857"
-hash = "63b6c222bf2103b3023389dde5e2ecfe"
+rev = "6229767"
+hash = "347cc6b190eb0c2fd60513cc7ae37412"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:smart-filter"
+rev = "6229767"
+hash = "d6f7351ea25a43c9b5f4315fa1e23935"
 
 [[flavor.deps]]
 use = "matt-dong-123/gruvbox-material"
-rev = "6c36491"
-hash = "564f2335540ee2c440c3b671bc28ac60"
+rev = "e0fd2d8"
+hash = "8f46ca96c0bbe1bdfb4fa201dd5eed4b"
 
 [[flavor.deps]]
 use = "muratoffalex/kanagawa-lotus"
-rev = "00dcc74"
-hash = "8fe01c79d91d7154ce231334cc7275f2"
+rev = "adc1be6"
+hash = "e07042bfc3177c35d5e0723414e8bfaf"

@@ -1,6 +1,9 @@
 use std "path add"
 
-fnm env --json | from json | load-env
+let fnm = fnm env --json | from json
+# fnm links a fresh per-shell dir on every call; we use the shared one below, so drop it
+if $env.HOST_OS_NAME != "Windows" { rm $fnm.FNM_MULTISHELL_PATH }
+$fnm | reject FNM_MULTISHELL_PATH | load-env
 $env.FNM_BIN = $env.FNM_DIR | path join bin
 $env.FNM_MULTISHELL_PATH = $env.FNM_DIR | path join nodejs
 path add $env.FNM_BIN

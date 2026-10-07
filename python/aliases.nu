@@ -1,3 +1,3 @@
-export def python  [...args] { uv run -- python ...$args }
-export def python3 [...args] { uv run -- python ...$args }
-export def pip     [...args] { uv run -- python -m pip ...$args }
+export def --wrapped python  [...args] { uv run -- python ...$args }
+export def --wrapped python3 [...args] { uv run -- python ...$args }
+export def --wrapped pip     [...args] { uv pip ...$args }

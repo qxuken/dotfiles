@@ -7,5 +7,3 @@ path:
   - python
 dotfile_source:
   - ["%path%", "config.nu"]
-dotfile_env_source:
-  - ["%path%", env.nu]
