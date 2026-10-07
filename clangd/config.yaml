@@ -1,0 +1,6 @@
+# C sources default to C23. Only .c: the flag is an error on C++ files
+# and on headers clangd reads as C++.
+If:
+  PathMatch: .*\.c
+CompileFlags:
+  Add: [-std=c23]
