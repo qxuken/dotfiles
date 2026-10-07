@@ -1,6 +1,6 @@
 local qd = require("qd")
 
-local pkgs = { "git", "fzf", "ripgrep", "fd", "cmake", "llvm", "fnm", "neovim" }
+local pkgs = { "git", "fzf", "ripgrep", "fd", "cmake", "llvm", "mise", "neovim" }
 
 return {
   path  = qd.host.windows and qd.path.local_appdata("nvim") or qd.path.config("nvim"),
@@ -8,7 +8,8 @@ return {
   scoop = pkgs,
   nushell = { source = { "config.nu" }, env_source = { "env.nu" } },
   setup = {
-    version = 1,
-    after = function(m) qd.run("fnm", "install", "--lts") end,
+    version = 2,
+    -- node for plugins and language servers, from the mise module's config
+    after = function(m) qd.run("mise", "install") end,
   },
 }

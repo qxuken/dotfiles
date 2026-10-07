@@ -19,12 +19,6 @@ $env.config.shell_integration.osc9_9 = ($env.HOST_OS_NAME == 'Windows')
 # NOTE: Open issue https://github.com/nushell/nushell/issues/5585
 $env.config.shell_integration.osc133 = ("WEZTERM_PANE" not-in $env and "WSL_DISTRO_NAME" not-in $env)
 
-$env.config.hooks.env_change.PWD = [{|before, after|
-    if ('FNM_DIR' in $env) and ([.nvmrc .node-version] | path exists | any { |it| $it }) {
-        fnm use --install-if-missing
-    }
-}]
-
 use ./config/aliases.nu *
 use ./config/plugins.nu *
 source ./config/theme.nu

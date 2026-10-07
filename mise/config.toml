@@ -1,0 +1,6 @@
+[tools]
+node = "26"
+
+[settings]
+# pick up .nvmrc / .node-version, not only mise.toml
+idiomatic_version_file_enable_tools = ["node"]
