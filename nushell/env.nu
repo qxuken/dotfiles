@@ -46,18 +46,30 @@ if $env.HOST_OS_NAME != "Windows" {
       | where (path exists)
     )
 
-  if (which brew | is-not-empty) {
+  # Asking brew and gem costs ~200ms a launch, so `qd push` caches their
+  # answers (setup.push in nushell/qd.lua). Without the cache, ask them here.
+  let tool_paths_file = $env.HOME | path join .dotfiles-cache nushell tool-paths.json
+  let tool_paths = if ($tool_paths_file | path exists) {
+    open $tool_paths_file
+  } else {
+    {
+      library_path: (if (which brew | is-not-empty) { [(brew --prefix | path join lib)] } else { [] })
+      path: (if (which gem | is-not-empty) { [(gem environment gemdir | path join bin)] } else { [] })
+    }
+  }
+
+  if ($tool_paths.library_path | is-not-empty) {
     $env.LIBRARY_PATH = $env
     | get LIBRARY_PATH -o
     | default ''
     | split row (char esep)
     | where {is-not-empty}
-    | append (brew --prefix | path join lib)
+    | append $tool_paths.library_path
     | str join (char esep)
   }
 
-  if (which gem | is-not-empty) {
-    path add (gem environment gemdir | path join bin)
+  if ($tool_paths.path | is-not-empty) {
+    path add ...$tool_paths.path
   }
 }
 
