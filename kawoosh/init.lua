@@ -16,3 +16,10 @@ else
     end,
   })
 end
+
+-- Hate the q bumping
+kawoosh.unmap("n", "q")
+kawoosh.map("n", "<Leader>Q", "macro record")
+
+kawoosh.map("n", "<D-O>", "picker symbols")
+kawoosh.map("n", "<D-P>", "picker commands")
