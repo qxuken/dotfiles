@@ -17,9 +17,14 @@ else
   })
 end
 
+local OS_MOD = kawoosh.os == "mac" and "D" or "C"
+local function pmap(mode, key, cmd, opts)
+  kawoosh.map(mode, "<" .. OS_MOD .. "-" .. key .. ">", cmd, opts)
+end
+
+pmap("n", "S-o", "picker symbols")
+pmap("n", "S-p", "picker commands")
+
 -- Hate the q bumping
 kawoosh.unmap("n", "q")
 kawoosh.map("n", "<Leader>Q", "macro record")
-
-kawoosh.map("n", "<D-O>", "picker symbols")
-kawoosh.map("n", "<D-P>", "picker commands")
