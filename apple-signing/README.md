@@ -14,9 +14,9 @@ use ~/.config/apple-signing/signing.nu
 
 ## Initialize once
 
-`signing init qxuken/kui qxuken/carnet` creates **one local file**, `~/.config/apple-signing/profiles.toml`. If `qd push` already restored that file, skip init.
+`signing init qxuken/kui qxuken/carnet` creates **one local file**, `~/.config/apple-signing/.profiles.secret.toml`. If `qd push` already restored that file, skip init.
 
-1. Requires the restored `developer-id.p12` and stops if `profiles.toml` exists. Validates each `owner/repo` argument and lowercases it.
+1. Requires the restored `developer-id.p12` and stops if `.profiles.secret.toml` exists. Validates each `owner/repo` argument and lowercases it.
 2. Prompts for the export password (hidden). Opens the existing .p12, compares its leaf certificate’s SHA-256 fingerprint with `developer-id.cer`, and checks expiry, the Developer ID Application name, and the team ID format.
 3. Asks once for the Apple Account email, then prompts separately for each repository’s app-specific password (hidden). Enter a separately generated Apple password for each repo.
 4. Writes the shared export password, default email, and a separate email/password entry for each repo. Password fields use reversible base64 (`*_b64`) to avoid literal password matches in casual searches. Anyone who can read the local TOML can recover them. Its permissions are owner-only (0600).

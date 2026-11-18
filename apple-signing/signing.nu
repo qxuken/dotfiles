@@ -1,5 +1,6 @@
 # qd imports this module as "signing". Credentials exist in its installed directory.
 const root = (path self .)
+const profiles_path = ($root | path join .profiles.secret.toml)
 
 def canonical [repo: string] {
     if $repo !~ '^[A-Za-z0-9][A-Za-z0-9-]*/[A-Za-z0-9_.-]+$' {
@@ -60,7 +61,7 @@ def save-profiles [profiles: record] {
     let tmp = (mktemp --tmpdir-path $root '.profiles-XXXXXXXX')
     try {
         $stored | to toml | save --force --raw $tmp
-        mv -f $tmp ($root | path join profiles.toml)
+        mv -f $tmp $profiles_path
     } catch {
         rm -f $tmp
         error make {msg: "Could not save signing profiles"}
@@ -78,7 +79,7 @@ export def init [repo: string, ...others: string] {
     if not (($root | path join developer-id.p12) | path exists) {
         error make {msg: "Restore the signing module with qd push first"}
     }
-    if (($root | path join profiles.toml) | path exists) { error make {msg: "Already initialized. Use signing add for another repository."} }
+    if ($profiles_path | path exists) { error make {msg: "Already initialized. Use signing add for another repository."} }
     let names = ([$repo] | append $others | each {|r| canonical $r } | uniq)
     let pwd = (input -s 'PKCS#12 export password: ')
     inspect-cert $pwd | ignore
@@ -100,7 +101,7 @@ def repo-profile [config: record, name: string] {
 # Add a repository or replace its local notarization password.
 export def add [repo: string, --account: string] {
     let name = (canonical $repo)
-    let config = (open ($root | path join profiles.toml))
+    let config = (open $profiles_path)
     let email = if $account != null {
         if $account not-in $config.accounts { error make {msg: "Unknown notarization account"} }
         $config.accounts | get $account | get email
@@ -113,7 +114,7 @@ export def add [repo: string, --account: string] {
 
 def credentials [repo: string] {
     let name = (canonical $repo)
-    let config = (open ($root | path join profiles.toml))
+    let config = (open $profiles_path)
     if $name not-in $config.repositories { error make {msg: $"Run signing add ($name) first"} }
     let account = (repo-profile $config $name)
     let pwd = (read-password $config certificate_password)

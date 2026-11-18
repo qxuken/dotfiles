@@ -6,4 +6,5 @@ repo.fossil
 
 /apple-signing/*.p12
 /apple-signing/profiles.toml
+/apple-signing/.profiles.secret.toml
 /apple-signing/.profiles-*
