@@ -3,3 +3,7 @@ repo.fossil
 .fslckout
 .mirror_state
 **/.DS_Store
+
+/apple-signing/*.p12
+/apple-signing/profiles.toml
+/apple-signing/.profiles-*
